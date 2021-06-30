@@ -89,7 +89,11 @@
             class="dropdown-menu dropdown-content overflow-auto"
             aria-labelledby="accountDropdownButton"
           >
-            <a class="dropdown-item" href="#">{{ currentUser.name }}</a>
+            <router-link
+              class="dropdown-item"
+              :to="{ name: 'user', params: { id: currentUser.id } }"
+              >{{ currentUser.name }}</router-link
+            >
             <div class="dropdown-divider"></div>
             <a v-if="isAuthenticated" class="dropdown-item" href="#">登出</a>
             <a v-else class="dropdown-item" href="#">登入</a>
@@ -218,6 +222,13 @@ export default {
 }
 .mr-0 {
   margin-right: 0;
+}
+.dropdown-item.active {
+  color: #212529;
+  background-color: #ffffff;
+}
+.dropdown-item:hover {
+  background-color: #c7c7c7;
 }
 
 @media (max-width: 576px) {
