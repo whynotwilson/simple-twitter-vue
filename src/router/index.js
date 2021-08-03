@@ -44,6 +44,7 @@ const routes = [
 
 const router = createRouter({
   history: createWebHashHistory(),
+  linkExactActiveClass: 'active',
   routes
 })
 
