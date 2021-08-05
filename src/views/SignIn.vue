@@ -1,6 +1,10 @@
 <template>
   <div class="form-signin mt-5">
-    <form class="w-100" @submit.prevent="handleSubmit">
+    <form
+      enctype="application/x-www-form-urlencoded"
+      class="w-100"
+      @submit.prevent="handleSubmit"
+    >
       <div class="text-center mb-4">
         <h1 class="h2 mb-3 font-weight-normal">Sign In</h1>
       </div>
@@ -30,7 +34,11 @@
       </div>
 
       <div class="text-center">
-        <button class="btn btn-lg btn-primary btn-block mb-3" type="submit">
+        <button
+          class="btn btn-lg btn-primary btn-block mb-3"
+          type="submit"
+          :disabled="isProcessing"
+        >
           Submit
         </button>
       </div>
@@ -48,24 +56,58 @@
 
 <script>
 import { ref } from "vue";
+import authorizationAPI from "./../apis/authorization.js";
+import { Toast } from "./../utils/helpers.js";
+
 export default {
   setup() {
     return {
       email: ref(""),
       password: ref(""),
+      isProcessing: ref(false),
     };
   },
 
   methods: {
-    handleSubmit(e) {
-      const data = JSON.stringify({
-        email: this.email,
-        password: this.password,
-      });
+    async handleSubmit() {
+      try {
+        if (!this.email || !this.password) {
+          Toast.fire({
+            icon: "warning",
+            title: "請填入信箱及密碼",
+          });
+          return;
+        }
 
-      // TODO: 向後端驗證使用者登入資訊是否合法
-      console.log(e);
-      console.log("data", data);
+        this.isProcessing = true;
+
+        const response = await authorizationAPI.signIn({
+          email: this.email,
+          password: this.password,
+        });
+
+        const { data } = response;
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+
+        localStorage.setItem("token", data.token);
+        this.$router.push("/tweets");
+
+        Toast.fire({
+          icon: "success",
+          title: "登入成功",
+        });
+      } catch (error) {
+        this.password = "";
+        Toast.fire({
+          icon: "error",
+          title: "信箱或密碼錯誤",
+        });
+
+        this.isProcessing = false;
+        console.log("Error: ", error);
+      }
     },
   },
 };
@@ -79,6 +121,10 @@ export default {
   margin: auto;
   background-color: #ffffff;
   border-radius: 12px;
+}
+
+.swal2-container {
+  z-index: 2000;
 }
 
 @media (min-width: 768px) {
