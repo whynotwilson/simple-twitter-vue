@@ -170,6 +170,8 @@
 import { computed, ref, reactive } from "vue";
 import moment from "moment";
 import { useRoute } from "vue-router";
+import usersAPI from "./../apis/users.js";
+import { Toast } from "./../utils/helpers";
 
 export default {
   name: "TweetCard",
@@ -221,8 +223,22 @@ export default {
     };
 
     const addLike = async (tweetId) => {
-      // 待串接 api, Post '/tweets/:id/like'
-      emit("after-add-like", tweetId);
+      try {
+        const { data } = await usersAPI.addLike({ tweetId });
+
+        if (data.status !== "success") {
+          throw new Error("無法按讚，請稍後再試");
+        }
+
+        emit("after-add-like", tweetId);
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "無法按讚，請稍後再試",
+        });
+
+        console.log("Error: ", error);
+      }
     };
 
     const handleSubmit = async (tweetId) => {
