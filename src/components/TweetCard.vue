@@ -218,8 +218,22 @@ export default {
     const collapse = ref(null);
 
     const deleteLike = async (tweetId) => {
-      // 待串接 api, Delete '/tweets/:id'
-      emit("after-delete-like", tweetId);
+      try {
+        const { data } = await usersAPI.deleteLike({ tweetId });
+
+        if (data.status !== "success") {
+          throw new Error("無法按讚，請稍後再試");
+        }
+
+        emit("after-delete-like", tweetId);
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "無法收回讚，請稍後再試",
+        });
+
+        console.log("Error: ", error);
+      }
     };
 
     const addLike = async (tweetId) => {

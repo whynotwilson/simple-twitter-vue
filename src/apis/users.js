@@ -12,4 +12,9 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
+  deleteLike({ tweetId }) {
+    return apiHelper.delete(`/tweets/${tweetId}/like`, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
 }
