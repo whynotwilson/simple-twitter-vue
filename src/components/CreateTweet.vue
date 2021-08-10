@@ -40,6 +40,8 @@
 <script>
 import { reactive, ref, computed } from "vue";
 import { useRoute } from "vue-router";
+import { Toast } from "./../utils/helpers.js";
+import tweetsAPI from "./../apis/tweets.js";
 
 export default {
   name: "CreateTweet",
@@ -59,14 +61,46 @@ export default {
 
     let isProcessing = ref(false);
     let tweetText = ref("");
+
     const isTweetTextEmpty = computed(() => {
       return tweetText.value ? false : true;
     });
 
-    const handleSubmit = () => {
-      console.log("CreateTweet");
-      console.log("tweetText: ", this.tweetText);
-      emit("after-create-tweet", this.tweetText);
+    const handleSubmit = async () => {
+      try {
+        if (!tweetText.value) {
+          Toast.fire({
+            icon: "warning",
+            title: "您尚未填寫任何貼文",
+          });
+          return;
+        }
+
+        isProcessing.value = true;
+        const { data } = await tweetsAPI.create({
+          tweetText: tweetText.value,
+        });
+
+        if (data.status !== "success") {
+          throw new Error("無法新增貼文，請稍後再試");
+        }
+
+        const { tweet } = data;
+
+        isProcessing.value = false;
+
+        emit("after-create-tweet", tweet);
+        tweetText.value = "";
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "無法新增貼文，請稍後再試",
+        });
+
+        isProcessing.value = false;
+        tweetText.value = "";
+        console.log("Error: ", error);
+      }
     };
 
     return {

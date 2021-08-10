@@ -136,9 +136,19 @@ export default {
   },
 
   methods: {
-    afterCreateTweet(tweetText) {
-      console.log("afterCreateTweet");
-      console.log("tweetText: ", tweetText);
+    afterCreateTweet(tweet) {
+      this.tweetsData.tweets.unshift({
+        LikedUsers: [],
+        Replies: [],
+        User: this.currentUser,
+        UserId: this.currentUser.id,
+        createdAt: new Date(),
+        description: tweet.description,
+        id: tweet.id,
+        isThumbsUp: false,
+        likedCount: 0,
+        replyCount: 0,
+      });
     },
 
     afterDeleteLike(tweetId) {
