@@ -41,7 +41,12 @@
               @click.prevent="showMask('editTweet')"
               >編輯</a
             >
-            <a class="dropdown-item" href="#">刪除</a>
+            <a
+              class="dropdown-item"
+              href="#"
+              @click.prevent="deleteTweet(tweet.id)"
+              >刪除</a
+            >
           </div>
           <div
             class="dropdown-menu dropdown-menu-end overflow-auto"
@@ -171,7 +176,8 @@ import { computed, ref, reactive } from "vue";
 import moment from "moment";
 import { useRoute } from "vue-router";
 import usersAPI from "./../apis/users.js";
-import { Toast } from "./../utils/helpers";
+import tweetsAPI from "./../apis/tweets.js";
+import { Toast, DeleteConfirm } from "./../utils/helpers";
 
 export default {
   name: "TweetCard",
@@ -187,6 +193,7 @@ export default {
     "after-add-like",
     "after-delete-like",
     "after-create-comment",
+    "after-delete-tweet",
     "update-mask",
   ],
   setup(props, { emit }) {
@@ -273,6 +280,28 @@ export default {
     const showMask = (key) => {
       emit("update-mask", { key, id: tweet.value.id });
     };
+
+    const deleteTweet = async (tweetId) => {
+      try {
+        const { isConfirmed } = await DeleteConfirm.fire();
+        if (isConfirmed) {
+          const { data } = await tweetsAPI.delete({ tweetId });
+          if (data.status !== "success") {
+            throw new Error("貼文刪除失敗");
+          }
+
+          emit("after-delete-tweet", tweetId);
+        }
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "無法刪除貼文，請稍後再試",
+        });
+
+        console.log("Error: ", error);
+      }
+    };
+
     return {
       tweet,
       replies,
@@ -287,6 +316,7 @@ export default {
       handleSubmit,
       fromNow,
       showMask,
+      deleteTweet,
     };
   },
   methods: {

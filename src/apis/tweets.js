@@ -12,4 +12,9 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
+  delete({ tweetId }) {
+    return apiHelper.delete(`/tweets/${tweetId}`, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  }
 }

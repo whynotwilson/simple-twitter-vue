@@ -18,6 +18,7 @@
       @after-delete-like="afterDeleteLike"
       @after-add-like="afterAddLike"
       @after-create-comment="afterCreateComment"
+      @after-delete-tweet="afterDeleteTweet"
       @update-mask="showMask"
     />
   </div>
@@ -184,6 +185,17 @@ export default {
       console.log("comment: ", payload.comment);
       console.log("afterCreateComment");
       console.log("");
+    },
+
+    afterDeleteTweet(tweetId) {
+      this.tweetsData.tweets = this.tweetsData.tweets.filter((tweet) => {
+        return tweet.id !== tweetId;
+      });
+
+      // 按日期排序，新的最前面
+      this.tweetsData.tweets.sort(function (a, b) {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
     },
 
     hideMask() {
