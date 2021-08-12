@@ -177,6 +177,7 @@ import moment from "moment";
 import { useRoute } from "vue-router";
 import usersAPI from "./../apis/users.js";
 import tweetsAPI from "./../apis/tweets.js";
+import commentsAPI from "./../apis/comments.js";
 import { Toast, DeleteConfirm } from "./../utils/helpers";
 
 export default {
@@ -263,11 +264,32 @@ export default {
     };
 
     const handleSubmit = async (tweetId) => {
-      // 待串接 api, Post '/replies'
-      emit("after-create-comment", {
-        tweetId,
-        comment: comment.value,
-      });
+      try {
+        const { data } = await commentsAPI.create({
+          tweetId,
+          comment: comment.value,
+        });
+
+        if (data.status !== "success") {
+          throw new Error("無法新增留言");
+        }
+
+        emit("after-create-comment", {
+          tweetId,
+          comment: comment.value,
+          user: currentUser,
+          replyId: data.replyId,
+        });
+
+        comment.value = "";
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "無法新增留言，請稍後再試",
+        });
+
+        console.log("Error: ", error);
+      }
     };
 
     const fromNow = (datetime) => {

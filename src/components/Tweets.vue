@@ -181,10 +181,22 @@ export default {
     },
 
     afterCreateComment(payload) {
-      console.log("tweetId: ", payload.tweetId);
-      console.log("comment: ", payload.comment);
-      console.log("afterCreateComment");
-      console.log("");
+      const { tweetId, comment, user, replyId } = payload;
+      this.tweetsData.tweets = this.tweetsData.tweets.map((tweet) => {
+        if (tweet.id !== tweetId) {
+          return tweet;
+        } else {
+          tweet.Replies.unshift({
+            TweetId: tweetId,
+            User: user,
+            UserId: user.id,
+            comment,
+            createdAt: new Date(),
+            id: replyId,
+          });
+          return tweet;
+        }
+      });
     },
 
     afterDeleteTweet(tweetId) {
