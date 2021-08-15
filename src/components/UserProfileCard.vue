@@ -3,6 +3,13 @@
     <Mask @hide-mask="hideMask" />
   </div>
 
+  <div
+    v-if="isMask === 'editUserProfile'"
+    class="z-index-1090 bg-white mask-box p-2"
+  >
+    <EditUserProfile :initialUser="user" />
+  </div>
+
   <main class="py-4 border-bottom">
     <div class="d-flex justify-content-center">
       <div class="me-2 d-none d-sm-block">
@@ -63,11 +70,13 @@
 <script>
 import { reactive, ref, watch, computed } from "vue";
 import Mask from "./../components/Mask.vue";
+import EditUserProfile from "./../components/EditUserProfile.vue";
 
 export default {
   name: "UserProfileCard",
   components: {
     Mask,
+    EditUserProfile,
   },
   setup() {
     let dummyData = reactive({
