@@ -1,4 +1,8 @@
 <template>
+  <div v-show="isMask !== ''">
+    <Mask @hide-mask="hideMask" />
+  </div>
+
   <main class="py-4 border-bottom">
     <div class="d-flex justify-content-center">
       <div class="me-2 d-none d-sm-block">
@@ -58,9 +62,13 @@
 
 <script>
 import { reactive, ref, watch, computed } from "vue";
+import Mask from "./../components/Mask.vue";
 
 export default {
   name: "UserProfileCard",
+  components: {
+    Mask,
+  },
   setup() {
     let dummyData = reactive({
       currentUser: {
@@ -465,7 +473,6 @@ export default {
         document.body.style.overflow = "auto";
       }
     });
-
     const showMask = (key) => {
       isMask.value = key;
     };
