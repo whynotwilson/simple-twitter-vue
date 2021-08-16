@@ -24,6 +24,18 @@
     />
   </div>
 
+  <div
+    v-else-if="isMask === 'followings'"
+    class="z-index-1090 bg-white mask-box"
+  >
+    <Followings
+      :initialFollowings="followings"
+      @after-remove-following="afterRemoveFollowing"
+      @after-add-following="afterAddFollowing"
+      @hide-mask="hideMask"
+    />
+  </div>
+
   <main class="py-4 border-bottom">
     <div class="d-flex justify-content-center">
       <div class="me-2 d-none d-sm-block">
@@ -86,6 +98,7 @@ import { reactive, ref, watch, computed } from "vue";
 import Mask from "./../components/Mask.vue";
 import EditUserProfile from "./../components/EditUserProfile.vue";
 import Followers from "./../components/Followers.vue";
+import Followings from "./../components/Followings.vue";
 
 export default {
   name: "UserProfileCard",
@@ -93,6 +106,7 @@ export default {
     Mask,
     EditUserProfile,
     Followers,
+    Followings,
   },
   setup() {
     let dummyData = reactive({
