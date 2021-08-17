@@ -1,5 +1,7 @@
 <template>
   <div class="container">
+    <CreateTweet @after-create-tweet="afterCreateTweet" />
+
     <TweetCard
       v-for="tweet in tweetsData.tweets"
       :key="tweet.id"
@@ -15,10 +17,12 @@
 <script>
 import { reactive, onMounted } from "vue";
 import TweetCard from "../components/TweetCard.vue";
+import CreateTweet from "./../components/CreateTweet.vue";
 
 export default {
   components: {
     TweetCard,
+    CreateTweet,
   },
   setup() {
     let currentUser = reactive({
