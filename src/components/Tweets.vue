@@ -1,4 +1,12 @@
 <template>
+  <div v-show="isMask !== ''">
+    <Mask @hide-mask="hideMask" />
+  </div>
+
+  <div v-if="isMask === 'editTweet'" class="z-index-1090 bg-white mask-box">
+    <EditTweet :initialTweet="toEditTweet" />
+  </div>
+
   <div class="container">
     <CreateTweet @after-create-tweet="afterCreateTweet" />
 
@@ -10,19 +18,24 @@
       @after-delete-like="afterDeleteLike"
       @after-add-like="afterAddLike"
       @after-create-comment="afterCreateComment"
+      @update-mask="showMask"
     />
   </div>
 </template>
 
 <script>
-import { reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, watch } from "vue";
 import TweetCard from "../components/TweetCard.vue";
 import CreateTweet from "./../components/CreateTweet.vue";
+import Mask from "./../components/Mask.vue";
+import EditTweet from "./../components/EditTweet.vue";
 
 export default {
   components: {
     TweetCard,
     CreateTweet,
+    Mask,
+    EditTweet,
   },
   setup() {
     let currentUser = reactive({
@@ -606,9 +619,23 @@ export default {
       });
     });
 
+    let isMask = ref("");
+    let toEditTweet = ref({});
+
+    // 彈出遮罩時禁止底層頁面滾動
+    watch(isMask, (oldValue, newValue) => {
+      if (!newValue) {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
+    });
+
     return {
       currentUser,
       tweetsData,
+      isMask,
+      toEditTweet,
     };
   },
 
@@ -652,6 +679,34 @@ export default {
       console.log("afterCreateComment");
       console.log("");
     },
+
+    hideMask() {
+      this.isMask = "";
+      this.toEditTweet = {};
+    },
+
+    showMask(payload) {
+      const { key, id } = payload;
+      this.isMask = key;
+      this.toEditTweet = this.tweetsData.tweets.filter(
+        (tweet) => tweet.id === id
+      )[0];
+    },
   },
 };
 </script>
+
+<style>
+.mask-box {
+  position: fixed;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 10px;
+  height: 200px;
+  min-width: 280px;
+}
+.z-index-1090 {
+  z-index: 1090;
+}
+</style>

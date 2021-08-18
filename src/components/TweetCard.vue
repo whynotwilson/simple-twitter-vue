@@ -35,7 +35,12 @@
             aria-labelledby="tweetEllipsisDropdownButton"
             v-if="isMyPage"
           >
-            <a class="dropdown-item" href="#">編輯</a>
+            <a
+              class="dropdown-item"
+              href="#"
+              @click.prevent="showMask('editTweet')"
+              >編輯</a
+            >
             <a class="dropdown-item" href="#">刪除</a>
           </div>
           <div
@@ -176,7 +181,12 @@ export default {
       type: Object,
     },
   },
-  emits: ["after-add-like", "after-delete-like", "after-create-comment"],
+  emits: [
+    "after-add-like",
+    "after-delete-like",
+    "after-create-comment",
+    "update-mask",
+  ],
   setup(props, { emit }) {
     let currentUser = reactive({
       id: 3,
@@ -230,6 +240,9 @@ export default {
       return moment(datetime).fromNow();
     };
 
+    const showMask = (key) => {
+      emit("update-mask", { key, id: tweet.value.id });
+    };
     return {
       tweet,
       replies,
@@ -243,6 +256,7 @@ export default {
       addLike,
       handleSubmit,
       fromNow,
+      showMask,
     };
   },
   methods: {
