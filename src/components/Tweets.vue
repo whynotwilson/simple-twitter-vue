@@ -4,7 +4,7 @@
   </div>
 
   <div v-if="isMask === 'editTweet'" class="z-index-1090 bg-white mask-box">
-    <EditTweet :initialTweet="toEditTweet" />
+    <EditTweet :initialTweet="toEditTweet" @after-edit-tweet="afterEditTweet" />
   </div>
 
   <div class="container">
@@ -208,6 +208,19 @@ export default {
       this.tweetsData.tweets.sort(function (a, b) {
         return new Date(b.createdAt) - new Date(a.createdAt);
       });
+    },
+
+    afterEditTweet(tweet) {
+      this.tweetsData.tweets = this.tweetsData.tweets.map((t) => {
+        if (tweet.id !== t.id) {
+          return t;
+        } else {
+          t.description = tweet.description;
+          return t;
+        }
+      });
+
+      this.hideMask();
     },
 
     hideMask() {

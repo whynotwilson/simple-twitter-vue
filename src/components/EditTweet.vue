@@ -43,6 +43,8 @@
 
 <script>
 import { reactive, ref, computed } from "vue";
+import tweetsAPI from "./../apis/tweets.js";
+import { Toast } from "./../utils/helpers.js";
 
 export default {
   name: "EditTweet",
@@ -51,7 +53,8 @@ export default {
       type: Object,
     },
   },
-  setup(props) {
+  emits: ["after-edit-tweet"],
+  setup(props, { emit }) {
     let currentUser = reactive({
       id: 3,
       name: "User2",
@@ -75,14 +78,26 @@ export default {
 
     const textarea = ref(null);
 
-    const handleSubmit = function (e) {
-      // console.log("description", this.description);
-      const form = e.target;
-      const formData = new FormData(form);
+    const handleSubmit = async function () {
+      try {
+        const { data } = await tweetsAPI.put({
+          description: this.description,
+          tweetId: this.tweet.id,
+        });
 
-      for (let [key, value] of formData.entries()) {
-        console.log(key + ": " + value);
-        formData.delete(key);
+        if (data.status !== "success") {
+          throw new Error(data.message || "無法編輯貼文，請稍後再試");
+        }
+
+        const { tweet } = data;
+        emit("after-edit-tweet", tweet);
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "無法編輯貼文，請稍後再試",
+        });
+
+        console.log("Error: ", error);
       }
     };
 
