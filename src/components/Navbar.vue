@@ -34,16 +34,16 @@
         <div
           aria-label="帳號控制項和設定"
           class="d-flex dropdown-button align-items-center"
-          v-tooltip="{
-            theme: {
-              placement: 'bottom',
-            },
-          }"
         >
+          <a href="#">
+            <button class="btn-circle">
+              <i class="fab fa-2x fa-facebook-messenger"></i>
+            </button>
+          </a>
+
           <button
             type="button"
             class="btn-circle"
-            v-tooltip="'功能表'"
             id="applicationDropdownButton"
             data-bs-toggle="dropdown"
             aria-haspopup="true"
@@ -61,26 +61,6 @@
 
           <button
             class="btn-circle"
-            v-tooltip="'Messenger'"
-            id="messengerDropdownButton"
-            data-bs-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-          >
-            <i class="fab fa-2x fa-facebook-messenger"></i>
-          </button>
-          <div
-            class="dropdown-menu dropdown-content overflow-auto"
-            aria-labelledby="messengerDropdownButton"
-          >
-            <a class="dropdown-item" href="#">messenger</a>
-            <a class="dropdown-item" href="#">messenger</a>
-            <a class="dropdown-item" href="#">messenger</a>
-          </div>
-
-          <button
-            class="btn-circle"
-            v-tooltip="'通知'"
             id="bellDropdownButton"
             data-bs-toggle="dropdown"
             aria-haspopup="true"
@@ -98,7 +78,6 @@
 
           <button
             class="btn-circle"
-            v-tooltip="'帳號'"
             id="accountDropdownButton"
             data-bs-toggle="dropdown"
             aria-haspopup="true"
