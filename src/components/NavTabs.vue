@@ -14,6 +14,10 @@
 
 <script>
 import { reactive } from "vue";
+import usersAPI from "./../apis/users.js";
+import { Toast } from "./../utils/helpers.js";
+import { onMounted, ref } from "vue";
+import { useRoute, onBeforeRouteUpdate } from "vue-router";
 
 export default {
   name: "NavTabs",
@@ -24,18 +28,6 @@ export default {
         name: "User2",
         email: "User2@example.com",
         avatar: "https://randomuser.me/api/portraits/women/66.jpg",
-      },
-
-      user: {
-        id: 3,
-        email: "user2@example.com",
-        name: "user2",
-        avatar: "https://randomuser.me/api/portraits/women/66.jpg",
-        introduction:
-          "Nam dignissimos molestiae vero quibusdam in dolor at nulla nesciunt. Consequuntur eaque beatae et et. Pariatur neque placeat ab suscipit sit. At ut commodi rerum blanditiis animi ratione atque nam. Nostrum eum exercitationem sunt similique esse facere et voluptatem modi. Labore architecto corporis at sunt omnis assumenda numquam.",
-        role: "user",
-        createdAt: "2021-04-22T13:07:01.000Z",
-        updatedAt: "2021-04-22T13:07:01.000Z",
       },
 
       tabs: [
@@ -60,9 +52,36 @@ export default {
       ],
     });
 
+    let user = ref({});
+    const route = useRoute();
+    let userId = route.params.id;
+
+    const getUser = async () => {
+      try {
+        const { data } = await usersAPI.getUser({ userId });
+        user.value = data;
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "無法取得用戶資料，請稍後再試",
+        });
+
+        console.log("Error: ", error);
+      }
+    };
+
+    onMounted(getUser());
+
+    onBeforeRouteUpdate((to, from, next) => {
+      userId = to.params.id;
+      getUser();
+      next();
+    });
+
     return {
       currentUser: dummyData.currentUser,
-      user: dummyData.user,
+      user,
+      getUser,
       tabs: dummyData.tabs,
     };
   },
