@@ -37,4 +37,9 @@ export default {
       },
     })
   },
+  addFollowing({ followingId }) {
+    return apiHelper.post(`/followships`, { followingId }, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
 }

@@ -179,19 +179,33 @@ export default {
       }
     };
 
-    const addFollowing = (user) => {
-      // 待串接 api
-
-      dummyData.followers = dummyData.followers.map((follower) => {
-        if (follower.id !== user.id) {
-          return follower;
-        } else {
-          follower.isFollowing = true;
-          return follower;
+    const addFollowing = async (user) => {
+      try {
+        const { data } = await usersAPI.addFollowing({
+          followingId: user.id,
+        });
+        if (data.status !== "success") {
+          throw new Error(data.message);
         }
-      });
 
-      emit("after-add-following", user);
+        dummyData.followers = dummyData.followers.map((follower) => {
+          if (follower.id !== user.id) {
+            return follower;
+          } else {
+            follower.isFollowing = true;
+            return follower;
+          }
+        });
+
+        emit("after-add-following", user);
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "無法加入追蹤，請稍後再試",
+        });
+
+        console.log("Error: ", error);
+      }
     };
 
     return {
