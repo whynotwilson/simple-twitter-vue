@@ -41,6 +41,8 @@
 
 <script>
 import { reactive } from "vue";
+import usersAPI from "./../apis/users.js";
+import { Toast } from "./../utils/helpers.js";
 
 export default {
   name: "Followings",
@@ -57,7 +59,14 @@ export default {
   emits: ["after-remove-following", "after-add-following", "hide-mask"],
 
   setup(props, { emit }) {
-    let data = reactive({
+    let followingsData = reactive({
+      currentUser: {
+        id: 3,
+        name: "User2",
+        email: "User2@example.com",
+        avatar: "https://randomuser.me/api/portraits/women/66.jpg",
+      },
+
       followings: props.initialFollowings.map((following) => {
         return {
           ...following,
@@ -72,25 +81,42 @@ export default {
       emit("hide-mask");
     };
 
-    const removeFollowing = (followingId) => {
-      // 待串接 api
-
-      data.followings = data.followings.map((following) => {
-        if (following.id !== followingId) {
-          return following;
-        } else {
-          following.isFollowing = false;
-          return following;
+    const removeFollowing = async (followingId) => {
+      try {
+        const { data } = await usersAPI.deleteFollowShip({
+          followerId: followingsData.currentUser.id,
+          followingId,
+        });
+        if (data.status !== "success") {
+          throw new Error(data.message);
         }
-      });
 
-      emit("after-remove-following", followingId);
+        followingsData.followings = followingsData.followings.map(
+          (following) => {
+            if (following.id !== followingId) {
+              return following;
+            } else {
+              following.isFollowing = false;
+              return following;
+            }
+          }
+        );
+
+        emit("after-remove-following", followingId);
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "無法取消追蹤，請稍後再試",
+        });
+
+        console.log("Error: ", error);
+      }
     };
 
     const addFollowing = (user) => {
       // 待串接 api
 
-      data.followings = data.followings.map((following) => {
+      followingsData.followings = followingsData.followings.map((following) => {
         if (following.id !== user.id) {
           return following;
         } else {
@@ -103,7 +129,8 @@ export default {
     };
 
     return {
-      followings: data.followings,
+      currentUser: followingsData.currentUser,
+      followings: followingsData.followings,
       hideMask,
       removeFollowing,
       addFollowing,

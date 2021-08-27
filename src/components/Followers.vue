@@ -148,19 +148,35 @@ export default {
       }
     };
 
-    const removeFollowing = (followerId) => {
-      // 待串接 api
+    const removeFollowing = async (followerId) => {
+      try {
+        const { data } = await usersAPI.deleteFollowShip({
+          followingId: followerId,
+          followerId: dummyData.currentUser.id,
+        });
 
-      dummyData.followers = dummyData.followers.map((follower) => {
-        if (follower.id !== followerId) {
-          return follower;
-        } else {
-          follower.isFollowing = false;
-          return follower;
+        if (data.status !== "success") {
+          throw new Error(data.message);
         }
-      });
 
-      emit("after-remove-following", followerId);
+        dummyData.followers = dummyData.followers.map((follower) => {
+          if (follower.id !== followerId) {
+            return follower;
+          } else {
+            follower.isFollowing = false;
+            return follower;
+          }
+        });
+
+        emit("after-remove-following", followerId);
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "無法取消追蹤，請稍後再試",
+        });
+
+        console.log("Error: ", error);
+      }
     };
 
     const addFollowing = (user) => {

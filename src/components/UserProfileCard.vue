@@ -199,6 +199,7 @@ export default {
 
     onBeforeRouteUpdate((to, from, next) => {
       getUser(to.params.id);
+      getMyFollowings();
       next();
     });
 
