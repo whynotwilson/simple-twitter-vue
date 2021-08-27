@@ -27,4 +27,14 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
+  deleteFollowShip({ followerId, followingId }) {
+    return apiHelper.delete(`/followships/${followingId}`, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+      data: {
+        followerId,
+      },
+    })
+  },
 }

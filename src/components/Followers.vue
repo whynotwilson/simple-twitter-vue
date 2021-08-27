@@ -56,6 +56,8 @@
 <script>
 import { reactive, computed } from "vue";
 import { useRoute } from "vue-router";
+import usersAPI from "./../apis/users.js";
+import { Toast } from "./../utils/helpers.js";
 
 export default {
   name: "Followers",
@@ -114,20 +116,36 @@ export default {
       emit("hide-mask");
     };
 
-    const removeFollower = (followerId) => {
-      // 待串接 api
+    const removeFollower = async (followerId) => {
+      try {
+        const { data } = await usersAPI.deleteFollowShip({
+          followerId,
+          followingId: dummyData.currentUser.id,
+        });
 
-      // 更改按鈕文字: 移除 -> 已移除，disabled 按鈕
-      dummyData.followers = dummyData.followers.map((follower) => {
-        if (follower.id !== followerId) {
-          return follower;
-        } else {
-          follower.isRemove = true;
-          return follower;
+        if (data.status !== "success") {
+          throw new Error(data.message);
         }
-      });
 
-      emit("after-remove-follower", followerId);
+        // 更改按鈕文字: 移除 -> 已移除，disabled 按鈕
+        dummyData.followers = dummyData.followers.map((follower) => {
+          if (follower.id !== followerId) {
+            return follower;
+          } else {
+            follower.isRemove = true;
+            return follower;
+          }
+        });
+
+        emit("after-remove-follower", followerId);
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "無法移除粉絲，請稍後再試",
+        });
+
+        console.log("Error: ", error);
+      }
     };
 
     const removeFollowing = (followerId) => {
