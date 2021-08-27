@@ -67,6 +67,9 @@ export default {
     initialFollowings: {
       type: Array,
     },
+    initialMyFollowings: {
+      type: Array,
+    },
   },
 
   emits: [
@@ -94,7 +97,7 @@ export default {
         return {
           ...follower,
           isRemove: false,
-          isFollowing: props.initialFollowings
+          isFollowing: props.initialMyFollowings
             .map((f) => f.id)
             .includes(follower.id),
         };

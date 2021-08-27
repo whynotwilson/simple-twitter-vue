@@ -22,4 +22,9 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
+  getMyFollowings() {
+    return apiHelper.get(`/get_current_user_followings`, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
 }

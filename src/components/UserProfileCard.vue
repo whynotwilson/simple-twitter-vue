@@ -17,6 +17,7 @@
     <Followers
       :initialFollowers="followers"
       :initialFollowings="followings"
+      :initialMyFollowings="myFollowings"
       @after-remove-follower="afterRemoveFollower"
       @after-remove-following="afterRemoveFollowing"
       @after-add-following="afterAddFollowing"
@@ -30,6 +31,7 @@
   >
     <Followings
       :initialFollowings="followings"
+      :initialMyFollowings="myFollowings"
       @after-remove-following="afterRemoveFollowing"
       @after-add-following="afterAddFollowing"
       @hide-mask="hideMask"
@@ -127,6 +129,7 @@ export default {
     const route = useRoute();
     const userId = route.params.id;
     const router = useRouter();
+    let myFollowings = ref([]);
 
     const getUser = async (userId) => {
       try {
@@ -150,8 +153,26 @@ export default {
       }
     };
 
+    const getMyFollowings = async () => {
+      try {
+        const { data } = await usersAPI.getMyFollowings();
+        if (!data) {
+          throw new Error(data.message);
+        }
+        myFollowings.value = data.Followings;
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "無法取得用戶資料，請稍後再試",
+        });
+
+        console.log("Error: ", error);
+      }
+    };
+
     onMounted(() => {
       getUser(userId);
+      getMyFollowings();
     });
 
     let isMask = ref("");
@@ -190,6 +211,7 @@ export default {
       followers,
       followings,
       isMyPage,
+      myFollowings,
     };
   },
 
