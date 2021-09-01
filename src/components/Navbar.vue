@@ -120,19 +120,11 @@
 </template>
  
 <script>
-import { reactive } from "vue";
 import { ref } from "vue";
+import { mapState } from "vuex";
 
 export default {
   setup() {
-    let currentUser = reactive({
-      id: 3,
-      name: "User2",
-      email: "User2@example.com",
-      avatar: "https://randomuser.me/api/portraits/women/66.jpg",
-    });
-    let isAuthenticated = ref(true);
-
     let searchString = ref("");
     let isSearching = ref(false);
 
@@ -150,14 +142,15 @@ export default {
     };
 
     return {
-      currentUser,
       searchString,
       isSearching,
-      isAuthenticated,
       handleSearch,
       confirmIsSearching,
       cancelIsSearching,
     };
+  },
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
   },
 };
 </script>
