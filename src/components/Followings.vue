@@ -43,6 +43,7 @@
 import { reactive } from "vue";
 import usersAPI from "./../apis/users.js";
 import { Toast } from "./../utils/helpers.js";
+import { mapState, useStore } from "vuex";
 
 export default {
   name: "Followings",
@@ -60,13 +61,6 @@ export default {
 
   setup(props, { emit }) {
     let followingsData = reactive({
-      currentUser: {
-        id: 3,
-        name: "User2",
-        email: "User2@example.com",
-        avatar: "https://randomuser.me/api/portraits/women/66.jpg",
-      },
-
       followings: props.initialFollowings.map((following) => {
         return {
           ...following,
@@ -77,6 +71,8 @@ export default {
       }),
     });
 
+    const store = useStore();
+
     const hideMask = () => {
       emit("hide-mask");
     };
@@ -84,7 +80,7 @@ export default {
     const removeFollowing = async (followingId) => {
       try {
         const { data } = await usersAPI.deleteFollowShip({
-          followerId: followingsData.currentUser.id,
+          followerId: store.state.currentUser.id,
           followingId,
         });
         if (data.status !== "success") {
@@ -145,12 +141,14 @@ export default {
     };
 
     return {
-      currentUser: followingsData.currentUser,
       followings: followingsData.followings,
       hideMask,
       removeFollowing,
       addFollowing,
     };
+  },
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
   },
 };
 </script>

@@ -172,13 +172,14 @@
 </template>
 
 <script>
-import { computed, ref, reactive } from "vue";
+import { computed, ref } from "vue";
 import moment from "moment";
 import { useRoute } from "vue-router";
 import usersAPI from "./../apis/users.js";
 import tweetsAPI from "./../apis/tweets.js";
 import commentsAPI from "./../apis/comments.js";
 import { Toast, DeleteConfirm } from "./../utils/helpers";
+import { mapState, useStore } from "vuex";
 
 export default {
   name: "TweetCard",
@@ -198,18 +199,14 @@ export default {
     "update-mask",
   ],
   setup(props, { emit }) {
-    let currentUser = reactive({
-      id: 3,
-      name: "User2",
-      email: "User2@example.com",
-      avatar: "https://randomuser.me/api/portraits/women/66.jpg",
-    });
-
     const route = useRoute();
+    const store = useStore();
+
     let isMyPage = ref(Boolean);
 
     if (route.params.id) {
-      isMyPage = Number(route.params.id) === currentUser.id ? true : false;
+      isMyPage =
+        Number(route.params.id) === store.state.currentUser.id ? true : false;
     }
 
     let isAuthenticated = ref(true);
@@ -277,7 +274,7 @@ export default {
         emit("after-create-comment", {
           tweetId,
           comment: comment.value,
-          user: currentUser,
+          user: store.state.currentUser,
           replyId: data.replyId,
         });
 
@@ -328,7 +325,6 @@ export default {
       tweet,
       replies,
       comment,
-      currentUser,
       isAuthenticated,
       isMyPage,
       commentInput,
@@ -349,6 +345,9 @@ export default {
       }
       this.$refs.commentInput.focus();
     },
+  },
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
   },
 };
 </script>

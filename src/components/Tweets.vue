@@ -34,6 +34,7 @@ import tweetsAPI from "./../apis/tweets.js";
 import usersAPI from "./../apis/users.js";
 import { Toast } from "./../utils/helpers.js";
 import { useRoute, onBeforeRouteUpdate } from "vue-router";
+import { mapState, useStore } from "vuex";
 
 export default {
   components: {
@@ -55,12 +56,7 @@ export default {
     const route = useRoute();
     let userId = route.params.id;
 
-    let currentUser = reactive({
-      id: 3,
-      name: "User2",
-      email: "User2@example.com",
-      avatar: "https://randomuser.me/api/portraits/women/66.jpg",
-    });
+    const store = useStore();
 
     let tweetsData = reactive({
       tweets: [],
@@ -75,7 +71,7 @@ export default {
 
           data = data.map((tweet) => {
             tweet.isThumbsUp = tweet.LikedUsers.map((user) => user.id).includes(
-              currentUser.id
+              store.state.currentUser.id
             );
             tweet.likedCount = tweet.LikedUsers.length;
             return tweet;
@@ -129,7 +125,6 @@ export default {
 
     return {
       key,
-      currentUser,
       tweetsData,
       isMask,
       toEditTweet,
@@ -235,6 +230,10 @@ export default {
         (tweet) => tweet.id === id
       )[0];
     },
+  },
+
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
   },
 };
 </script>

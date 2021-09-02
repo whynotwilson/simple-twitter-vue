@@ -42,9 +42,10 @@
 </template>
 
 <script>
-import { reactive, ref, computed } from "vue";
+import { ref, computed } from "vue";
 import tweetsAPI from "./../apis/tweets.js";
 import { Toast } from "./../utils/helpers.js";
+import { mapState } from "vuex";
 
 export default {
   name: "EditTweet",
@@ -55,13 +56,6 @@ export default {
   },
   emits: ["after-edit-tweet"],
   setup(props, { emit }) {
-    let currentUser = reactive({
-      id: 3,
-      name: "User2",
-      email: "User2@example.com",
-      avatar: "https://randomuser.me/api/portraits/women/66.jpg",
-    });
-
     const tweet = computed({
       get: () => props.initialTweet,
     });
@@ -102,7 +96,6 @@ export default {
     };
 
     return {
-      currentUser,
       tweet,
       textarea,
       description,
@@ -113,6 +106,9 @@ export default {
   },
   mounted() {
     this.$refs.textarea.focus();
+  },
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
   },
 };
 </script>

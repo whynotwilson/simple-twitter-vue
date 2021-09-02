@@ -23,13 +23,6 @@ export default {
   name: "NavTabs",
   setup() {
     let dummyData = reactive({
-      currentUser: {
-        id: 3,
-        name: "User2",
-        email: "User2@example.com",
-        avatar: "https://randomuser.me/api/portraits/women/66.jpg",
-      },
-
       tabs: [
         {
           id: 1,
@@ -79,7 +72,6 @@ export default {
     });
 
     return {
-      currentUser: dummyData.currentUser,
       user,
       getUser,
       tabs: dummyData.tabs,

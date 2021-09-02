@@ -58,6 +58,7 @@ import { reactive, computed } from "vue";
 import { useRoute } from "vue-router";
 import usersAPI from "./../apis/users.js";
 import { Toast } from "./../utils/helpers.js";
+import { mapState, useStore } from "vuex";
 
 export default {
   name: "Followers",
@@ -86,15 +87,9 @@ export default {
     // 原本: this.$route.params.id
     // 改為: 1. 引用 useRoute   2. 宣告 route   3. route.params.id
     const route = useRoute();
+    const store = useStore();
 
     let dummyData = reactive({
-      currentUser: {
-        id: 3,
-        name: "User2",
-        email: "User2@example.com",
-        avatar: "https://randomuser.me/api/portraits/women/66.jpg",
-      },
-
       followers: props.initialFollowers.map((follower) => {
         return {
           ...follower,
@@ -106,7 +101,7 @@ export default {
       }),
 
       isMyPage: computed(() => {
-        return Number(dummyData.currentUser.id) === Number(route.params.id)
+        return Number(store.state.currentUser.id) === Number(route.params.id)
           ? true
           : false;
       }),
@@ -120,7 +115,7 @@ export default {
       try {
         const { data } = await usersAPI.deleteFollowShip({
           followerId,
-          followingId: dummyData.currentUser.id,
+          followingId: store.state.currentUser.id,
         });
 
         if (data.status !== "success") {
@@ -152,7 +147,7 @@ export default {
       try {
         const { data } = await usersAPI.deleteFollowShip({
           followingId: followerId,
-          followerId: dummyData.currentUser.id,
+          followerId: store.state.currentUser.id,
         });
 
         if (data.status !== "success") {
@@ -209,7 +204,6 @@ export default {
     };
 
     return {
-      currentUser: dummyData.currentUser,
       followers: dummyData.followers,
       isMyPage: dummyData.isMyPage,
       hideMask,
@@ -217,6 +211,9 @@ export default {
       removeFollowing,
       addFollowing,
     };
+  },
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
   },
 };
 </script>

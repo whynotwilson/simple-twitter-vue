@@ -15,23 +15,12 @@
 </template>
 
 <script>
-import { reactive } from "vue";
 import Tweets from "../components/Tweets.vue";
 
 export default {
   name: "home",
   components: {
     Tweets,
-  },
-  setup() {
-    let currentUser = reactive({
-      id: 3,
-      name: "User2",
-      email: "User2@example.com",
-      avatar: "https://randomuser.me/api/portraits/women/66.jpg",
-    });
-
-    return { currentUser };
   },
 };
 </script>

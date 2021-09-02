@@ -38,7 +38,8 @@
 </template>
 
 <script>
-import { reactive, ref, computed } from "vue";
+import { ref, computed } from "vue";
+import { mapState, useStore } from "vuex";
 import { useRoute } from "vue-router";
 import { Toast } from "./../utils/helpers.js";
 import tweetsAPI from "./../apis/tweets.js";
@@ -47,16 +48,16 @@ export default {
   name: "CreateTweet",
   emits: ["after-create-tweet"],
   setup(props, { emit }) {
-    let currentUser = reactive({
-      id: 3,
-      name: "User2",
-      email: "User2@example.com",
-      avatar: "https://randomuser.me/api/portraits/women/66.jpg",
-    });
-
     const route = useRoute();
+    const store = useStore();
+
     const isMyPage = computed(() => {
-      return Number(currentUser.id) === Number(route.params.id) ? true : false;
+      if (!route.params.id) {
+        return true;
+      }
+      return Number(store.state.currentUser.id) === Number(route.params.id)
+        ? true
+        : false;
     });
 
     let isProcessing = ref(false);
@@ -106,11 +107,13 @@ export default {
     return {
       isMyPage,
       isProcessing,
-      currentUser,
       tweetText,
       isTweetTextEmpty,
       handleSubmit,
     };
+  },
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
   },
 };
 </script>

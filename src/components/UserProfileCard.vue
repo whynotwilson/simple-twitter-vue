@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import { reactive, ref, watch, computed, onMounted } from "vue";
+import { ref, watch, computed, onMounted } from "vue";
 import Mask from "./../components/Mask.vue";
 import EditUserProfile from "./../components/EditUserProfile.vue";
 import Followers from "./../components/Followers.vue";
@@ -104,6 +104,7 @@ import Followings from "./../components/Followings.vue";
 import usersAPI from "./../apis/users.js";
 import { Toast } from "./../utils/helpers.js";
 import { useRoute, onBeforeRouteUpdate, useRouter } from "vue-router";
+import { mapState, useStore } from "vuex";
 
 export default {
   name: "UserProfileCard",
@@ -114,15 +115,6 @@ export default {
     Followings,
   },
   setup() {
-    let dummyData = reactive({
-      currentUser: {
-        id: 3,
-        name: "User2",
-        email: "User2@example.com",
-        avatar: "https://randomuser.me/api/portraits/women/66.jpg",
-      },
-    });
-
     let user = ref({});
     let followers = ref([]);
     let followings = ref([]);
@@ -170,6 +162,7 @@ export default {
       }
     };
 
+    const store = useStore();
     onMounted(() => {
       getUser(userId);
       getMyFollowings();
@@ -194,7 +187,7 @@ export default {
     };
 
     const isMyPage = computed(() => {
-      return dummyData.currentUser.id === user.value.id ? true : false;
+      return store.state.currentUser.id === user.value.id ? true : false;
     });
 
     onBeforeRouteUpdate((to, from, next) => {
@@ -207,7 +200,6 @@ export default {
       isMask,
       showMask,
       hideMask,
-      currentUser: dummyData.currentUser,
       user,
       followers,
       followings,
@@ -236,6 +228,10 @@ export default {
         this.followings.push(user);
       }
     },
+  },
+
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
   },
 };
 </script>
