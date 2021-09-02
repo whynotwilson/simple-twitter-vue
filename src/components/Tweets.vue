@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { ref, reactive, onMounted, watch, computed } from "vue";
+import { ref, reactive, onMounted, watch, computed, inject } from "vue";
 import TweetCard from "../components/TweetCard.vue";
 import CreateTweet from "./../components/CreateTweet.vue";
 import Mask from "./../components/Mask.vue";
@@ -61,6 +61,9 @@ export default {
     let tweetsData = reactive({
       tweets: [],
     });
+
+    const isUserEdited = inject("isUserEdited");
+    const updateIsUserEdited = inject("updateIsUserEdited");
 
     const fetchTweets = async () => {
       try {
@@ -121,6 +124,18 @@ export default {
       } else {
         document.body.style.overflow = "auto";
       }
+    });
+
+    watch(isUserEdited, (oldValue, newValue) => {
+      if (newValue) {
+        tweetsData.tweets = tweetsData.tweets.map((tweet) => {
+          tweet.User.avatar = store.state.currentUser.avatar;
+          tweet.User.name = store.state.currentUser.name;
+          return tweet;
+        });
+      }
+
+      updateIsUserEdited(false);
     });
 
     return {

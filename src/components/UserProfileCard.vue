@@ -7,7 +7,7 @@
     v-if="isMask === 'editUserProfile'"
     class="z-index-1090 bg-white mask-box p-2"
   >
-    <EditUserProfile :initialUser="user" />
+    <EditUserProfile :initialUser="user" @after-edit-user="afterEditUser" />
   </div>
 
   <div
@@ -227,6 +227,13 @@ export default {
       if (Number(this.$route.params.id) === Number(this.currentUser.id)) {
         this.followings.push(user);
       }
+    },
+
+    afterEditUser(payload) {
+      if (payload.avatar.value) {
+        this.user.avatar = payload.avatar.value;
+      }
+      this.hideMask();
     },
   },
 

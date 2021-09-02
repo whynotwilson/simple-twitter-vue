@@ -1,6 +1,10 @@
 <template>
   <h3 class="text-center pt-3 pb-2">編輯個人檔案</h3>
-  <form @submit.prevent="handleSubmit" class="h-87">
+  <form
+    @submit.prevent="handleSubmit"
+    class="h-87"
+    enctype="multipart/form-data"
+  >
     <div class="flex h-100">
       <div class="form-group row">
         <label for="name" class="col-sm-2 col-form-label">Name</label>
@@ -30,9 +34,9 @@
           />
 
           <input
-            id="image"
+            id="avatar"
             type="file"
-            name="image"
+            name="avatar"
             accept="image/*"
             class="form-control-file"
             @change="handleFileChange"
@@ -41,7 +45,13 @@
       </div>
       <div class="position-absolute w-100" style="bottom: 3%">
         <div class="text-center">
-          <button type="submit" class="btn btn-primary">更新個人資料</button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            :disabled="isProcessing"
+          >
+            更新個人資料
+          </button>
         </div>
       </div>
     </div>
@@ -49,29 +59,75 @@
 </template>
 
 <script>
-import { computed, ref } from "vue";
+import { computed, ref, inject } from "vue";
+import { Toast } from "./../utils/helpers.js";
+import usersAPI from "./../apis/users.js";
+import { useStore } from "vuex";
 
 export default {
   name: "EditUserProfile",
+  emits: ["after-edit-user"],
   props: {
     initialUser: {
       type: Object,
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const user = computed({
       get: () => props.initialUser,
     });
 
+    const store = useStore();
+
     let tempUserAvatar = ref("");
+    let isProcessing = ref(false);
+    const updateIsUserEdited = inject("updateIsUserEdited");
 
-    const handleSubmit = function (e) {
-      const form = e.target;
-      const formData = new FormData(form);
+    const handleSubmit = async (e) => {
+      try {
+        if (!user.value.name) {
+          Toast.fire({
+            icon: "warning",
+            title: "您尚未填寫姓名",
+          });
+          return;
+        }
 
-      for (let [key, value] of formData.entries()) {
-        console.log(key + ": " + value);
-        formData.delete(key);
+        const form = e.target;
+        const formData = new FormData(form);
+
+        isProcessing.value = true;
+        const { data } = await usersAPI.putUser({
+          formData,
+          userId: user.value.id,
+        });
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+
+        isProcessing.value = false;
+
+        Toast.fire({
+          icon: "success",
+          title: "成功編輯個人檔案",
+        });
+
+        store.commit("setCurrentUser", {
+          avatar: tempUserAvatar.value || user.value.avatar,
+          name: user.value.name,
+        });
+        updateIsUserEdited(true);
+        emit("after-edit-user", { avatar: tempUserAvatar });
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "無法編輯個人檔案，請稍後再試",
+        });
+
+        isProcessing.value = false;
+        console.log("Error: ", error);
+        emit("after-edit-user", { avatar: "" });
       }
     };
 
@@ -84,6 +140,7 @@ export default {
 
     return {
       user,
+      isProcessing,
       tempUserAvatar,
       handleSubmit,
       handleFileChange,
