@@ -1,6 +1,10 @@
 <template>
   <div class="form-signin mt-5">
-    <form class="w-100" @submit.prevent="handleSubmit">
+    <form
+      class="w-100"
+      @submit.prevent="handleSubmit"
+      enctype="application/x-www-form-urlencoded"
+    >
       <div class="text-center mb-4">
         <h1 class="h2 mb-3 font-weight-normal">Sign Up</h1>
       </div>
@@ -79,6 +83,8 @@
 
 <script>
 import { ref } from "vue";
+import authorizationAPI from "./../apis/authorization.js";
+import { Toast } from "./../utils/helpers.js";
 
 export default {
   setup() {
@@ -91,17 +97,55 @@ export default {
   },
 
   methods: {
-    handleSubmit(e) {
-      const data = JSON.stringify({
-        name: this.name,
-        email: this.email,
-        password: this.password,
-        passwordCheck: this.passwordCheck,
-      });
+    async handleSubmit() {
+      try {
+        if (
+          !this.name ||
+          !this.email ||
+          !this.password ||
+          !this.passwordCheck
+        ) {
+          Toast.fire({
+            icon: "warning",
+            title: "請確認已填寫所有欄位",
+          });
+          return;
+        }
 
-      // TODO: 向後端驗證使用者註冊資訊是否合法
-      console.log(e);
-      console.log("data", data);
+        if (this.password !== this.passwordCheck) {
+          Toast.fire({
+            icon: "warning",
+            title: "兩次輸入的密碼不同",
+          });
+          this.passwordCheck = "";
+          return;
+        }
+
+        const { data } = await authorizationAPI.signUp({
+          name: this.name,
+          email: this.email,
+          password: this.password,
+          passwordCheck: this.passwordCheck,
+        });
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+
+        Toast.fire({
+          icon: "success",
+          title: "註冊成功",
+        });
+
+        this.$router.push("/signin");
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: error || "無法註冊，請稍後再試",
+        });
+
+        console.log("Error: ", error);
+      }
     },
   },
 };
