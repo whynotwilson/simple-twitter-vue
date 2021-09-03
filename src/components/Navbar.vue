@@ -95,7 +95,13 @@
               >{{ currentUser.name }}</router-link
             >
             <div class="dropdown-divider"></div>
-            <a v-if="isAuthenticated" class="dropdown-item" href="#">登出</a>
+            <a
+              v-if="isAuthenticated"
+              class="dropdown-item"
+              href="#"
+              @click="logout"
+              >登出</a
+            >
             <a v-else class="dropdown-item" href="#">登入</a>
           </div>
         </div>
@@ -151,6 +157,12 @@ export default {
   },
   computed: {
     ...mapState(["currentUser", "isAuthenticated"]),
+  },
+  methods: {
+    logout() {
+      this.$store.commit("revokeAuthentication");
+      this.$router.push("/signin");
+    },
   },
 };
 </script>

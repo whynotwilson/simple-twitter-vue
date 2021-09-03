@@ -22,6 +22,11 @@ export default createStore({
       }
       state.isAuthenticated = true
     },
+    revokeAuthentication(state) {
+      state.currentUser = {}
+      state.isAuthenticated = false
+      localStorage.removeItem('token')
+    },
   },
 
   // 透過 API 請求資料
