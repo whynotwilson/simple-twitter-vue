@@ -11,6 +11,7 @@ export default createStore({
       avatar: "",
     },
     isAuthenticated: false,
+    token: "",
   },
 
   // 用來修改 state 的方法
@@ -21,10 +22,12 @@ export default createStore({
         ...currentUser,
       }
       state.isAuthenticated = true
+      state.token = localStorage.getItem('token')
     },
     revokeAuthentication(state) {
       state.currentUser = {}
       state.isAuthenticated = false
+      state.token = ""
       localStorage.removeItem('token')
     },
   },
@@ -47,8 +50,12 @@ export default createStore({
           avatar,
         })
 
+        return true
       } catch (error) {
         console.log("Error: ", error);
+        // 驗證失敗的話觸發登出的行為，以清除 state 中的 token
+        commit('revokeAuthentication')
+        return false
       }
     }
   },
