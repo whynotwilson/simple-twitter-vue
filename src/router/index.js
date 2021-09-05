@@ -31,6 +31,11 @@ const routes = [
     component: () => import('../views/User.vue')
   },
   {
+    path: '/users/:id',
+    name: 'not-exist',
+    component: () => import('../views/NotExist.vue')
+  },
+  {
     path: '/users/:id/tags',
     name: 'tags',
     component: () => import('../views/Tags.vue')
