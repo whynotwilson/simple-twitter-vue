@@ -1,55 +1,35 @@
 import { apiHelper } from "./../utils/helpers.js";
-const getToken = () => localStorage.getItem('token')
 
 export default {
   getCurrentUser() {
-    return apiHelper.get(`/get_current_user`, {
-      headers: { Authorization: `Bearer ${getToken()}` }
-    })
+    return apiHelper.get(`/get_current_user`)
   },
   getTweets({ userId }) {
-    return apiHelper.get(`/users/${userId}/tweets`, {
-      headers: { Authorization: `Bearer ${getToken()}` }
-    })
+    return apiHelper.get(`/users/${userId}/tweets`)
   },
   addLike({ tweetId }) {
-    return apiHelper.post(`/tweets/${tweetId}/like`, {}, {
-      headers: { Authorization: `Bearer ${getToken()}` }
-    })
+    return apiHelper.post(`/tweets/${tweetId}/like`, {})
   },
   deleteLike({ tweetId }) {
-    return apiHelper.delete(`/tweets/${tweetId}/like`, {
-      headers: { Authorization: `Bearer ${getToken()}` }
-    })
+    return apiHelper.delete(`/tweets/${tweetId}/like`)
   },
   getUser({ userId }) {
-    return apiHelper.get(`/users/${userId}`, {
-      headers: { Authorization: `Bearer ${getToken()}` }
-    })
+    return apiHelper.get(`/users/${userId}`)
   },
   putUser({ formData, userId }) {
-    return apiHelper.put(`/users/${userId}`, formData, {
-      headers: { Authorization: `Bearer ${getToken()}` }
-    })
+    return apiHelper.put(`/users/${userId}`, formData)
   },
   getMyFollowings() {
-    return apiHelper.get(`/get_current_user_followings`, {
-      headers: { Authorization: `Bearer ${getToken()}` }
-    })
+    return apiHelper.get(`/get_current_user_followings`)
   },
   deleteFollowShip({ followerId, followingId }) {
     return apiHelper.delete(`/followships/${followingId}`, {
-      headers: {
-        Authorization: `Bearer ${getToken()}`,
-      },
       data: {
         followerId,
       },
     })
   },
   addFollowing({ followingId }) {
-    return apiHelper.post(`/followships`, { followingId }, {
-      headers: { Authorization: `Bearer ${getToken()}` }
-    })
+    return apiHelper.post(`/followships`, { followingId })
   },
 }
