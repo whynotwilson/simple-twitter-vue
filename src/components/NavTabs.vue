@@ -1,5 +1,5 @@
 <template>
-  <ul class="d-flex justify-content-center padding-none">
+  <ul v-if="!isLoading" class="d-flex justify-content-center padding-none">
     <li class="px-4" v-for="tab in tabs" :key="tab.id">
       <router-link
         :to="{ name: tab.pathName, params: { id: user.id } }"
@@ -10,6 +10,9 @@
       </router-link>
     </li>
   </ul>
+  <div v-else class="spinner-border text-primary mx-auto" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
 </template>
 
 <script>
@@ -22,6 +25,7 @@ import { useRoute, onBeforeRouteUpdate } from "vue-router";
 export default {
   name: "NavTabs",
   setup() {
+    let isLoading = ref(true);
     let dummyData = reactive({
       tabs: [
         {
@@ -51,9 +55,12 @@ export default {
 
     const getUser = async () => {
       try {
+        isLoading.value = true;
         const { data } = await usersAPI.getUser({ userId });
         user.value = data;
+        isLoading.value = false;
       } catch (error) {
+        isLoading.value = false;
         Toast.fire({
           icon: "error",
           title: "無法取得用戶資料，請稍後再試",
@@ -72,6 +79,7 @@ export default {
     });
 
     return {
+      isLoading,
       user,
       getUser,
       tabs: dummyData.tabs,

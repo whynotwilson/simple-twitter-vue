@@ -38,60 +38,66 @@
     />
   </div>
 
-  <main class="py-4 border-bottom">
-    <div class="d-flex justify-content-center">
-      <div class="me-2 d-none d-sm-block">
-        <img class="rounded-pill w-100px" :src="user.avatar" alt="avatar" />
-      </div>
+  <div v-if="!isUserLoading && !isMyFollowingLoading">
+    <main class="py-4 border-bottom">
+      <div class="d-flex justify-content-center">
+        <div class="me-2 d-none d-sm-block">
+          <img class="rounded-pill w-100px" :src="user.avatar" alt="avatar" />
+        </div>
 
-      <div class="me-2 pt-2 d-block d-sm-none">
-        <img class="rounded-pill img-77px" :src="user.avatar" alt="avatar" />
-      </div>
+        <div class="me-2 pt-2 d-block d-sm-none">
+          <img class="rounded-pill img-77px" :src="user.avatar" alt="avatar" />
+        </div>
 
-      <div class="d-flex flex-column d-block d-sm-none ms-2">
-        <div class="fs-3 btn cursor-default text-start">{{ user.name }}</div>
-        <div>
-          <button
-            class="btn bg-#f0f2f5 border"
-            @click="showMask('editUserProfile')"
-            v-if="isMyPage"
-          >
-            編輯個人檔案
-          </button>
-          <a href="#" class="btn bg-#f0f2f5 border" v-else>發送訊息 </a>
+        <div class="d-flex flex-column d-block d-sm-none ms-2">
+          <div class="fs-3 btn cursor-default text-start">{{ user.name }}</div>
+          <div>
+            <button
+              class="btn bg-#f0f2f5 border"
+              @click="showMask('editUserProfile')"
+              v-if="isMyPage"
+            >
+              編輯個人檔案
+            </button>
+            <a href="#" class="btn bg-#f0f2f5 border" v-else>發送訊息 </a>
+          </div>
+        </div>
+
+        <div class="d-none d-sm-block ms-2">
+          <div class="d-flex align-items-center">
+            <span class="fs-3 me-3 btn cursor-default">{{ user.name }}</span>
+            <button
+              class="btn bg-#f0f2f5 border"
+              @click="showMask('editUserProfile')"
+              v-if="isMyPage"
+            >
+              編輯個人檔案
+            </button>
+            <a href="#" class="btn bg-#f0f2f5 border" v-else>發送訊息 </a>
+          </div>
+          <div>
+            <button class="btn" @click="showMask('followers')">
+              {{ followers.length }} 位追蹤者
+            </button>
+            <button class="btn" @click="showMask('followings')">
+              {{ followings.length }} 位追蹤中
+            </button>
+          </div>
         </div>
       </div>
-
-      <div class="d-none d-sm-block ms-2">
-        <div class="d-flex align-items-center">
-          <span class="fs-3 me-3 btn cursor-default">{{ user.name }}</span>
-          <button
-            class="btn bg-#f0f2f5 border"
-            @click="showMask('editUserProfile')"
-            v-if="isMyPage"
-          >
-            編輯個人檔案
-          </button>
-          <a href="#" class="btn bg-#f0f2f5 border" v-else>發送訊息 </a>
-        </div>
-        <div>
-          <button class="btn" @click="showMask('followers')">
-            {{ followers.length }} 位追蹤者
-          </button>
-          <button class="btn" @click="showMask('followings')">
-            {{ followings.length }} 位追蹤中
-          </button>
-        </div>
-      </div>
+    </main>
+    <div class="d-block d-sm-none border-bottom">
+      <button class="btn" @click="showMask('followers')">
+        {{ followers.length }} 位追蹤者
+      </button>
+      <button class="btn" @click="showMask('followings')">
+        {{ followings.length }} 位追蹤中
+      </button>
     </div>
-  </main>
-  <div class="d-block d-sm-none border-bottom">
-    <button class="btn" @click="showMask('followers')">
-      {{ followers.length }} 位追蹤者
-    </button>
-    <button class="btn" @click="showMask('followings')">
-      {{ followings.length }} 位追蹤中
-    </button>
+  </div>
+
+  <div v-else class="spinner-border text-primary mx-auto" role="status">
+    <span class="visually-hidden">Loading...</span>
   </div>
 </template>
 
@@ -122,9 +128,12 @@ export default {
     const userId = route.params.id;
     const router = useRouter();
     let myFollowings = ref([]);
+    let isUserLoading = ref(true);
+    let isMyFollowingLoading = ref(true);
 
     const getUser = async (userId) => {
       try {
+        isUserLoading.value = true;
         const { data } = await usersAPI.getUser({ userId });
         if (data.status === "error") {
           throw data.message;
@@ -132,7 +141,9 @@ export default {
         user.value = data;
         followers.value = data.Followers;
         followings.value = data.Followings;
+        isUserLoading.value = false;
       } catch (error) {
+        isUserLoading.value = false;
         if (error === "查詢無該用戶") {
           router.push({ name: "not-exist" });
         } else {
@@ -147,12 +158,15 @@ export default {
 
     const getMyFollowings = async () => {
       try {
+        isMyFollowingLoading.value = true;
         const { data } = await usersAPI.getMyFollowings();
         if (!data) {
           throw new Error(data.message);
         }
         myFollowings.value = data.Followings;
+        isMyFollowingLoading.value = false;
       } catch (error) {
+        isMyFollowingLoading.value = false;
         Toast.fire({
           icon: "error",
           title: "無法取得用戶資料，請稍後再試",
@@ -197,6 +211,8 @@ export default {
     });
 
     return {
+      isUserLoading,
+      isMyFollowingLoading,
       isMask,
       showMask,
       hideMask,

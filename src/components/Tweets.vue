@@ -7,7 +7,7 @@
     <EditTweet :initialTweet="toEditTweet" @after-edit-tweet="afterEditTweet" />
   </div>
 
-  <div class="container">
+  <div v-if="!isLoading" class="container">
     <CreateTweet @after-create-tweet="afterCreateTweet" />
 
     <TweetCard
@@ -21,6 +21,9 @@
       @after-delete-tweet="afterDeleteTweet"
       @update-mask="showMask"
     />
+  </div>
+  <div v-else class="spinner-border text-primary mx-auto" role="status">
+    <span class="visually-hidden">Loading...</span>
   </div>
 </template>
 
@@ -49,6 +52,7 @@ export default {
     },
   },
   setup(props) {
+    let isLoading = ref(true);
     const key = computed({
       get: () => props.view,
     });
@@ -67,6 +71,7 @@ export default {
 
     const fetchTweets = async () => {
       try {
+        isLoading.value = true;
         const processData = (data) => {
           if (!data) {
             throw new Error(data.message);
@@ -94,7 +99,9 @@ export default {
           let { data } = await usersAPI.getTweets({ userId });
           processData(data);
         }
+        isLoading.value = false;
       } catch (error) {
+        isLoading.value = false;
         Toast.fire({
           icon: "error",
           title: "無法取得貼文資料，請稍後再試",
@@ -139,6 +146,7 @@ export default {
     });
 
     return {
+      isLoading,
       key,
       tweetsData,
       isMask,
