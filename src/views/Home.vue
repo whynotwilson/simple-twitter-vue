@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import Tweets from "../components/Tweets.vue";
+import Tweets from "./../components/Tweets.vue";
 
 export default {
   name: "home",

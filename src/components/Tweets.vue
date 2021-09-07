@@ -29,7 +29,7 @@
 
 <script>
 import { ref, reactive, onMounted, watch, computed, inject } from "vue";
-import TweetCard from "../components/TweetCard.vue";
+import TweetCard from "./../components/TweetCard.vue";
 import CreateTweet from "./../components/CreateTweet.vue";
 import Mask from "./../components/Mask.vue";
 import EditTweet from "./../components/EditTweet.vue";
@@ -85,7 +85,7 @@ export default {
             return tweet;
           });
 
-          data.sort(function (a, b) {
+          data.sort(function(a, b) {
             return new Date(b.createdAt) - new Date(a.createdAt);
           });
 
@@ -223,7 +223,7 @@ export default {
       });
 
       // 按日期排序，新的最前面
-      this.tweetsData.tweets.sort(function (a, b) {
+      this.tweetsData.tweets.sort(function(a, b) {
         return new Date(b.createdAt) - new Date(a.createdAt);
       });
     },

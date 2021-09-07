@@ -1,5 +1,5 @@
-import { createStore } from 'vuex'
-import usersAPI from './../apis/users.js'
+import { createStore } from "vuex";
+import usersAPI from "./../apis/users.js";
 
 export default createStore({
   // 類似 data，但在所有 component 都能讀取
@@ -20,15 +20,15 @@ export default createStore({
       state.currentUser = {
         ...state.currentUser,
         ...currentUser,
-      }
-      state.isAuthenticated = true
-      state.token = localStorage.getItem('token')
+      };
+      state.isAuthenticated = true;
+      state.token = localStorage.getItem("token");
     },
     revokeAuthentication(state) {
-      state.currentUser = {}
-      state.isAuthenticated = false
-      state.token = ""
-      localStorage.removeItem('token')
+      state.currentUser = {};
+      state.isAuthenticated = false;
+      state.token = "";
+      localStorage.removeItem("token");
     },
   },
 
@@ -36,30 +36,29 @@ export default createStore({
   actions: {
     async fetchCurrentUser({ commit }) {
       try {
-        const { data } = await usersAPI.getCurrentUser()
+        const { data } = await usersAPI.getCurrentUser();
         if (data.status === "error") {
-          throw new Error(data.message)
+          throw new Error(data.message);
         }
 
-        const { id, name, email, avatar } = data
+        const { id, name, email, avatar } = data;
 
-        commit('setCurrentUser', {
+        commit("setCurrentUser", {
           id,
           name,
           email,
           avatar,
-        })
+        });
 
-        return true
+        return true;
       } catch (error) {
         console.log("Error: ", error);
         // 驗證失敗的話觸發登出的行為，以清除 state 中的 token
-        commit('revokeAuthentication')
-        return false
+        commit("revokeAuthentication");
+        return false;
       }
-    }
+    },
   },
 
-  modules: {
-  }
-})
+  modules: {},
+});

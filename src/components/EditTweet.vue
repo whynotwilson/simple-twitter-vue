@@ -72,7 +72,7 @@ export default {
 
     const textarea = ref(null);
 
-    const handleSubmit = async function () {
+    const handleSubmit = async function() {
       try {
         const { data } = await tweetsAPI.put({
           description: this.description,

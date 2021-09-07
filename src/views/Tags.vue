@@ -7,8 +7,8 @@
 </template>
 
 <script>
-import UserProfileCard from "../components/UserProfileCard.vue";
-import NavTabs from "../components/NavTabs.vue";
+import UserProfileCard from "./../components/UserProfileCard.vue";
+import NavTabs from "./../components/NavTabs.vue";
 
 export default {
   components: {

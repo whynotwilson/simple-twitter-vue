@@ -2,15 +2,15 @@ import { apiHelper } from "./../utils/helpers.js";
 
 export default {
   get() {
-    return apiHelper.get(`/tweets`)
+    return apiHelper.get(`/tweets`);
   },
   create({ tweetText }) {
-    return apiHelper.post(`/tweets`, { tweetText })
+    return apiHelper.post(`/tweets`, { tweetText });
   },
   delete({ tweetId }) {
-    return apiHelper.delete(`/tweets/${tweetId}`)
+    return apiHelper.delete(`/tweets/${tweetId}`);
   },
   put({ description, tweetId }) {
-    return apiHelper.put(`/tweets/${tweetId}`, { description })
+    return apiHelper.put(`/tweets/${tweetId}`, { description });
   },
-}
+};

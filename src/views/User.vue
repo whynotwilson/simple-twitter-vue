@@ -24,9 +24,9 @@
 </template>
 
 <script>
-import UserProfileCard from "../components/UserProfileCard.vue";
-import NavTabs from "../components/NavTabs.vue";
-import Tweets from "../components/Tweets.vue";
+import UserProfileCard from "./../components/UserProfileCard.vue";
+import NavTabs from "./../components/NavTabs.vue";
+import Tweets from "./../components/Tweets.vue";
 import { ref, provide, readonly } from "vue";
 
 export default {

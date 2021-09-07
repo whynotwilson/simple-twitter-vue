@@ -10,7 +10,7 @@
   >
     <div class="container-fluid d-flex justify-content-start">
       <router-link class="navbar-brand mr-0" to="/" style="display: block">
-        <img src="../../public/favicon.png" class="logo" alt="logo" />
+        <img src="./../../public/favicon.png" class="logo" alt="logo" />
       </router-link>
 
       <form
@@ -124,7 +124,7 @@
     </div>
   </nav>
 </template>
- 
+
 <script>
 import { ref } from "vue";
 import { mapState } from "vuex";
@@ -244,4 +244,3 @@ export default {
   }
 }
 </style>
-

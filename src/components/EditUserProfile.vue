@@ -131,7 +131,7 @@ export default {
       }
     };
 
-    const handleFileChange = function (e) {
+    const handleFileChange = function(e) {
       const files = e.target.files;
       if (!files.length) return;
       const imageURL = window.URL.createObjectURL(files[0]);
