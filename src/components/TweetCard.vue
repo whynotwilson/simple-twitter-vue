@@ -59,9 +59,7 @@
       </div>
 
       <!-- tweet 內容 -->
-      <div class="mx-4 mt-2 word-wrap-break">
-        {{ tweet.description }}
-      </div>
+      <div v-html="tweet.description" class="mx-4 mt-2 word-wrap-break"></div>
 
       <!-- 按讚人數，留言人數 -->
       <div class="mx-4 mt-2">

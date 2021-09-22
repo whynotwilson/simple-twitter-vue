@@ -16,12 +16,13 @@
           <img class="avatar" :src="currentUser.avatar" alt="avatar" />
         </router-link>
 
-        <input
-          type="text"
+        <textarea
           :placeholder="currentUser.name + '，在想些什麼呢？'"
-          class="rounded-pill form-input form-control"
+          class="form-control ms-2"
           v-model="tweetText"
-        />
+          cols="20"
+          rows="5"
+        ></textarea>
       </div>
 
       <div class="mb-3 mx-4">
@@ -78,6 +79,8 @@ export default {
         }
 
         isProcessing.value = true;
+        tweetText.value = tweetText.value.replace(/\n/g, "<br/>");
+
         const { data } = await tweetsAPI.create({
           tweetText: tweetText.value,
         });
