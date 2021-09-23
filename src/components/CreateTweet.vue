@@ -81,8 +81,23 @@ export default {
         isProcessing.value = true;
         tweetText.value = tweetText.value.replace(/\n/g, "<br/>");
 
+        let reg = new RegExp(/\B#[0-9_a-zA-Z\u4e00-\u9fa5]+/, "g");
+        let hasOneWord = new RegExp(/[a-zA-Z\u4e00-\u9fa5]+/, "g");
+
+        let tags = [];
+        let tag;
+        while ((tag = reg.exec(tweetText.value)) !== null) {
+          // tag can not be only number or only underline
+          // expect #12345 false
+          // expect #_____ false
+          if (tag[0].match(hasOneWord)) {
+            tags.push(tag[0].substr(1).toLowerCase());
+          }
+        }
+
         const { data } = await tweetsAPI.create({
           tweetText: tweetText.value,
+          tags,
         });
 
         if (data.status !== "success") {

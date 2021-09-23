@@ -4,8 +4,8 @@ export default {
   get() {
     return apiHelper.get(`/tweets`);
   },
-  create({ tweetText }) {
-    return apiHelper.post(`/tweets`, { tweetText });
+  create({ tweetText, tags }) {
+    return apiHelper.post(`/tweets`, { tweetText, tags });
   },
   delete({ tweetId }) {
     return apiHelper.delete(`/tweets/${tweetId}`);
