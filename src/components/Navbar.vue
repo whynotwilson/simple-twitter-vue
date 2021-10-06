@@ -35,7 +35,7 @@
           aria-label="帳號控制項和設定"
           class="d-flex dropdown-button align-items-center"
         >
-          <a href="#">
+          <a href="/#/chat">
             <button class="btn-circle">
               <i class="fab fa-2x fa-facebook-messenger"></i>
             </button>
