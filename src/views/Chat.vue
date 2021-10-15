@@ -150,6 +150,7 @@
 
 <script>
 import { ref, reactive, computed, watch } from "vue";
+import { mapState } from "vuex";
 import { useRoute } from "vue-router";
 
 export default {
@@ -263,6 +264,9 @@ export default {
         e.preventDefault();
       }
     },
+  },
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
   },
 };
 </script>
