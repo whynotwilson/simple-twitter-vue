@@ -15,7 +15,7 @@
           <div
             class="d-flex justify-content-center align-items-center border-bottom h-65px"
           >
-            <span class="fs-4">name</span>
+            <span class="fs-4">{{ currentUser.name }}</span>
           </div>
           <div class="d-flex flex-column">
             <router-link
@@ -24,7 +24,7 @@
               :key="friend.id"
               :to="{
                 name: 'chat-with-user',
-                params: { chatUserId: friend.id },
+                params: { chattingUserId: friend.id },
               }"
               ><div class="d-flex">
                 <div class="position-relative">
@@ -48,7 +48,7 @@
             <div
               class="d-flex justify-content-center align-items-center border-bottom h-65px"
             >
-              <span class="fs-4">{{ nowChatUser.name }}</span>
+              <span class="fs-4">{{ chattingUser.name }}</span>
             </div>
             <div>test</div>
             <div class="h-65 chat-form px-4 py-3">
@@ -93,7 +93,7 @@
             <div
               class="d-flex justify-content-center align-items-center border-bottom h-65px"
             >
-              <span class="fs-4">{{ nowChatUser.name }}</span>
+              <span class="fs-4">{{ chattingUser.name }}</span>
             </div>
             <div>test</div>
             <div class="h-65 chat-form px-4 py-3">
@@ -126,7 +126,7 @@
               :key="friend.id"
               :to="{
                 name: 'chat-with-user',
-                params: { chatUserId: friend.id },
+                params: { chattingUserId: friend.id },
               }"
               ><div class="d-flex">
                 <div class="position-relative">
@@ -149,17 +149,19 @@
 </template>
 
 <script>
-import { ref, reactive, computed, watch } from "vue";
-import { mapState } from "vuex";
-import { useRoute } from "vue-router";
+import { ref, computed, watch, onMounted } from "vue";
+import { mapState, useStore } from "vuex";
+import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from "vue-router";
 
 export default {
   name: "Chat",
   setup() {
+    let isLoading = ref(false);
     const route = useRoute();
+    const userId = route.params.id;
 
-    let chatUserId = computed(() => route.params.chatUserId);
-    let isChatUser = computed(() => (chatUserId.value ? true : false));
+    let chattingUserId = computed(() => route.params.chattingUserId);
+    let isChatUser = computed(() => (chattingUserId.value ? true : false));
 
     let dummyData = reactive({
       friends: [
@@ -224,31 +226,98 @@ export default {
         },
       ],
     });
+    let onlineUsersId = ref([]);
 
-    let nowChatUser = ref({});
+    const updateOnlineUsersId = (data) => {
+      onlineUsersId.value = data;
+    };
 
-    watch(chatUserId, (newValue) => {
-      if (newValue === "undefined") {
-        nowChatUser.value = {};
+    const updateIsOnlineInFriends = (onlineUsersId) => {
+      friends.value = friends.value.map((d) => {
+        return {
+          ...d,
+          isOnline: onlineUsersId.includes(d.id),
+        };
+      });
+    };
+    let chattingUser = ref({});
+
+    const store = useStore();
+    const defaultWsUrl = "ws://localhost:3000/";
+    let ws = ref({});
+
+    const wsConnect = (chattingUserId) => {
+      ws.value = new WebSocket(
+        defaultWsUrl + "?chattingUserId=" + chattingUserId,
+        store.state.token
+      );
+
+      ws.value.onopen = () => {};
+
+      ws.value.onclose = () => {};
+
+      ws.value.onmessage = (event) => {
+        let data = JSON.parse(event.data);
+        if (data.onlineUsersId) {
+          updateOnlineUsersId(data.onlineUsersId);
+        }
+      };
+    };
+
+    const wsSend = (message) => {
+      ws.value.send(message);
+    };
+
+    watch(chattingUserId, async (newValue) => {
+      if (newValue === "undefined" || !newValue) {
+        chattingUser.value = {};
+        onlineUsersId.value = [];
       } else {
         let friend = dummyData.friends.find((f) => f.id === Number(newValue));
-        nowChatUser.value = Object.assign({}, friend);
+        chattingUser.value = Object.assign({}, friend);
+        wsConnect(chattingUserId.value);
       }
+    });
+
+    watch(onlineUsersId, (newValue) => {
+      updateIsOnlineInFriends(newValue);
     });
 
     let message = ref("");
 
     const handleSubmit = () => {
-      console.log("message: " + message.value);
+      wsSend(String(message.value));
+      message.value = "";
     };
+
+    onBeforeRouteUpdate(() => {
+      if (ws.value.readyState) {
+        ws.value.close();
+      }
+    });
+
+    onBeforeRouteLeave(() => {
+      if (ws.value.readyState) {
+        ws.value.close();
+      }
+    });
+
+    onMounted(() => {
+      if (isChatUser.value) {
+        wsConnect(chattingUserId.value);
+      }
+    });
 
     return {
       friends: dummyData.friends,
       isChatUser,
-      chatUserId,
-      nowChatUser,
+      chattingUserId,
+      chattingUser,
       message,
       handleSubmit,
+      ws,
+      wsSend,
+      onlineUsersId,
     };
   },
   methods: {
@@ -266,7 +335,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(["currentUser", "isAuthenticated"]),
+    ...mapState(["currentUser", "isAuthenticated", "token"]),
   },
 };
 </script>
