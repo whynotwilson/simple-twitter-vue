@@ -209,7 +209,7 @@
 </template>
 
 <script>
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, watch, onMounted, nextTick } from "vue";
 import { mapState, useStore } from "vuex";
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from "vue-router";
 import { Toast } from "./../utils/helpers.js";
@@ -256,6 +256,13 @@ export default {
           isOnline: onlineUsersId.includes(d.id),
         };
       });
+    };
+
+    const updateMessages = async (data) => {
+      messages.value.push(data);
+
+      await nextTick();
+      setOverflowAtTheEnd();
     };
 
     const fetchMessages = async () => {
@@ -324,6 +331,12 @@ export default {
         let data = JSON.parse(event.data);
         if (data.onlineUsersId) {
           updateOnlineUsersId(data.onlineUsersId);
+        }
+
+        if (data.message) {
+          data.message.class = data.status ? "sent" : "received";
+          data.message.messageStatus = data.status === "success" ? true : false;
+          updateMessages(data.message);
         }
       };
     };
