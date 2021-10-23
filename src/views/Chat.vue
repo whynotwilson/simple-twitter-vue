@@ -152,6 +152,8 @@
 import { ref, computed, watch, onMounted } from "vue";
 import { mapState, useStore } from "vuex";
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from "vue-router";
+import { Toast } from "./../utils/helpers.js";
+import usersAPI from "./../apis/users.js";
 
 export default {
   name: "Chat",
@@ -163,69 +165,7 @@ export default {
     let chattingUserId = computed(() => route.params.chattingUserId);
     let isChatUser = computed(() => (chattingUserId.value ? true : false));
 
-    let dummyData = reactive({
-      friends: [
-        {
-          id: 2,
-          email: "user1@example.com",
-          name: "user1",
-          avatar:
-            "https://images.unsplash.com/photo-1544817747-b11e3e3b6ac2?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ",
-          introduction:
-            "Corrupti aut sint laudantium officia est culpa voluptas. Tenetur debitis soluta occaecati assumenda ex eveniet. Optio quas qui dolores vitae. Placeat tenetur accusantium harum voluptas iste quibusdam et. Corrupti reiciendis sit voluptatum quam. Nesciunt esse non modi et quibusdam officia vel rerum.",
-          role: "user",
-          createdAt: "2021-04-22T13:07:01.000Z",
-          updatedAt: "2021-04-22T13:07:01.000Z",
-          Followship: {
-            id: 3,
-            followerId: 5,
-            followingId: 2,
-            createdAt: "2021-04-22T13:06:53.000Z",
-            updatedAt: "2021-04-22T13:06:53.000Z",
-          },
-          isOnline: true,
-        },
-        {
-          id: 7,
-          email: "user6@example.com",
-          name: "user6",
-          avatar:
-            "https://images.unsplash.com/photo-1508186225823-0963cf9ab0de?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ",
-          introduction:
-            "Ut explicabo ut vitae culpa eligendi nobis nihil.\nSunt est sapiente qui nulla molestiae eveniet et ut.",
-          role: "user",
-          createdAt: "2021-04-22T13:07:02.000Z",
-          updatedAt: "2021-04-22T13:07:02.000Z",
-          Followship: {
-            id: 138,
-            followerId: 5,
-            followingId: 7,
-            createdAt: "2021-10-08T15:03:38.000Z",
-            updatedAt: "2021-10-08T15:03:38.000Z",
-          },
-          isOnline: false,
-        },
-        {
-          id: 8,
-          email: "user7@example.com",
-          name: "user7",
-          avatar:
-            "https://images-na.ssl-images-amazon.com/images/M/MV5BMTQ4MjM4OTA2OF5BMl5BanBnXkFtZTcwNDM3NzIzOQ@@._V1_UX172_CR0,0,172,256_AL_.jpg",
-          introduction: "Nihil nisi commodi.",
-          role: "user",
-          createdAt: "2021-04-22T13:07:02.000Z",
-          updatedAt: "2021-04-22T13:07:02.000Z",
-          Followship: {
-            id: 139,
-            followerId: 5,
-            followingId: 8,
-            createdAt: "2021-10-08T15:03:39.000Z",
-            updatedAt: "2021-10-08T15:03:39.000Z",
-          },
-          isOnline: true,
-        },
-      ],
-    });
+    let friends = ref([]);
     let onlineUsersId = ref([]);
 
     const updateOnlineUsersId = (data) => {
@@ -240,6 +180,31 @@ export default {
         };
       });
     };
+
+    const fetchFriends = async () => {
+      try {
+        isLoading.value = true;
+        let { data } = await usersAPI.getFriends({ userId });
+        if (onlineUsersId.value.length) {
+          data = data.map((d) => {
+            return {
+              ...d,
+              isOnline: onlineUsersId.value.includes(d.id),
+            };
+          });
+        }
+        friends.value = data;
+      } catch (error) {
+        isLoading.value = false;
+        Toast.fire({
+          icon: "error",
+          title: "無法取得好友列表，請稍後再試",
+        });
+
+        console.log("Error: ", error);
+      }
+    };
+
     let chattingUser = ref({});
 
     const store = useStore();
@@ -273,9 +238,12 @@ export default {
         chattingUser.value = {};
         onlineUsersId.value = [];
       } else {
-        let friend = dummyData.friends.find((f) => f.id === Number(newValue));
+        let friend = friends.value.find((f) => f.id === Number(newValue));
         chattingUser.value = Object.assign({}, friend);
-        wsConnect(chattingUserId.value);
+        if (isChatUser.value) {
+          wsConnect(chattingUserId.value);
+          fetchFriends();
+        }
       }
     });
 
@@ -303,13 +271,14 @@ export default {
     });
 
     onMounted(() => {
+      fetchFriends();
       if (isChatUser.value) {
         wsConnect(chattingUserId.value);
       }
     });
 
     return {
-      friends: dummyData.friends,
+      friends,
       isChatUser,
       chattingUserId,
       chattingUser,
