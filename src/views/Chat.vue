@@ -125,7 +125,37 @@
             >
               <span class="fs-4">{{ chattingUser.name }}</span>
             </div>
-            <div>test</div>
+            <div>
+              <div
+                id="messageBox2"
+                v-if="!isFetchMessagesLoading"
+                class="overflow-auto"
+              >
+                <div
+                  v-for="message in messages"
+                  :key="message.id"
+                  :class="message.class"
+                >
+                  <div>
+                    <img
+                      v-if="message.class === 'received'"
+                      :src="chattingUser.avatar"
+                      alt="avatar"
+                    />
+                    <span>{{ message.message }}</span>
+                  </div>
+                </div>
+              </div>
+              <div
+                v-else
+                class="d-flex justify-content-center align-items-center"
+                style="height: calc(80vh - 127px);"
+              >
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            </div>
             <div class="h-65 chat-form px-4 py-3">
               <form action="POST" class="border" @submit.prevent="handleSubmit">
                 <div class="pre"></div>
@@ -205,7 +235,14 @@ export default {
 
     const setOverflowAtTheEnd = () => {
       let messageBox = document.getElementById("messageBox");
-      messageBox.scrollTop = messageBox.scrollHeight;
+      let messageBox2 = document.getElementById("messageBox2");
+
+      if (messageBox !== null) {
+        messageBox.scrollTop = messageBox.scrollHeight;
+      }
+      if (messageBox2 !== null) {
+        messageBox2.scrollTop = messageBox2.scrollHeight;
+      }
     };
 
     const updateOnlineUsersId = (data) => {
@@ -489,7 +526,8 @@ textarea {
   margin-left: auto;
   margin-right: auto;
 }
-#messageBox {
+#messageBox,
+#messageBox2 {
   max-height: calc(80vh - 127px);
 }
 .sent {
