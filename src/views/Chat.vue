@@ -50,7 +50,37 @@
             >
               <span class="fs-4">{{ chattingUser.name }}</span>
             </div>
-            <div>test</div>
+            <div>
+              <div
+                id="messageBox"
+                v-if="!isFetchMessagesLoading"
+                class="overflow-auto"
+              >
+                <div
+                  v-for="message in messages"
+                  :key="message.id"
+                  :class="message.class"
+                >
+                  <div>
+                    <img
+                      v-if="message.class === 'received'"
+                      :src="chattingUser.avatar"
+                      alt="avatar"
+                    />
+                    <span>{{ message.message }}</span>
+                  </div>
+                </div>
+              </div>
+              <div
+                v-else
+                class="d-flex justify-content-center align-items-center"
+                style="height: calc(80vh - 127px);"
+              >
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            </div>
             <div class="h-65 chat-form px-4 py-3">
               <form action="POST" class="border" @submit.prevent="handleSubmit">
                 <div class="pre"></div>
@@ -458,5 +488,44 @@ textarea {
   width: 80%;
   margin-left: auto;
   margin-right: auto;
+}
+#messageBox {
+  max-height: calc(80vh - 127px);
+}
+.sent {
+  padding: 5px 0;
+  height: 50px;
+  width: 100%;
+  text-align: right;
+}
+.sent span {
+  display: inline-block;
+  height: 100%;
+  margin-right: 20px;
+  background-color: #f0f2f5;
+  padding: 10px 10px;
+  border-radius: 20px;
+  margin: auto 20px auto auto;
+}
+.received {
+  margin-left: 20px;
+  padding: 5px 0;
+  height: 50px;
+  text-align: left;
+}
+.received span {
+  display: inline-block;
+  height: 100%;
+  margin-right: 20px;
+  background-color: #f0f2f5;
+  padding: 10px 10px;
+  border-radius: 20px;
+  margin: auto 20px auto auto;
+}
+.received img {
+  height: 40px;
+  width: 40px;
+  border-radius: 20px;
+  margin-right: 8px;
 }
 </style>
