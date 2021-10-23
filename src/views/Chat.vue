@@ -154,11 +154,14 @@ import { mapState, useStore } from "vuex";
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from "vue-router";
 import { Toast } from "./../utils/helpers.js";
 import usersAPI from "./../apis/users.js";
+import messagesAPI from "./../apis/messages.js";
 
 export default {
   name: "Chat",
   setup() {
     let isLoading = ref(false);
+    let isFetchMessagesLoading = ref(false);
+
     const route = useRoute();
     const userId = route.params.id;
 
@@ -167,6 +170,13 @@ export default {
 
     let friends = ref([]);
     let onlineUsersId = ref([]);
+
+    let messages = ref([]);
+
+    const setOverflowAtTheEnd = () => {
+      let messageBox = document.getElementById("messageBox");
+      messageBox.scrollTop = messageBox.scrollHeight;
+    };
 
     const updateOnlineUsersId = (data) => {
       onlineUsersId.value = data;
@@ -179,6 +189,28 @@ export default {
           isOnline: onlineUsersId.includes(d.id),
         };
       });
+    };
+
+    const fetchMessages = async () => {
+      try {
+        isFetchMessagesLoading.value = true;
+
+        let { data } = await messagesAPI.getMessages({
+          chattingUserId: chattingUserId.value,
+        });
+
+        messages.value = data.messages;
+
+        isFetchMessagesLoading.value = false;
+      } catch (error) {
+        isFetchMessagesLoading.value = false;
+        Toast.fire({
+          icon: "error",
+          title: "無法取得聊天紀錄，請稍後再試",
+        });
+
+        console.log("Error: ", error);
+      }
     };
 
     const fetchFriends = async () => {
@@ -243,6 +275,8 @@ export default {
         if (isChatUser.value) {
           wsConnect(chattingUserId.value);
           fetchFriends();
+          await fetchMessages();
+          setOverflowAtTheEnd();
         }
       }
     });
@@ -270,15 +304,19 @@ export default {
       }
     });
 
-    onMounted(() => {
+    onMounted(async () => {
       fetchFriends();
+      await fetchMessages();
+      setOverflowAtTheEnd();
       if (isChatUser.value) {
         wsConnect(chattingUserId.value);
       }
     });
 
     return {
+      isFetchMessagesLoading,
       friends,
+      messages,
       isChatUser,
       chattingUserId,
       chattingUser,
