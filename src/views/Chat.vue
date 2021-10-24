@@ -51,11 +51,7 @@
               <span class="fs-4">{{ chattingUser.name }}</span>
             </div>
             <div>
-              <div
-                id="messageBox"
-                v-if="!isFetchMessagesLoading"
-                class="overflow-auto"
-              >
+              <div id="messageBox" v-if="!isFetchMessagesLoading">
                 <div
                   v-for="message in messages"
                   :key="message.id"
@@ -542,21 +538,25 @@ textarea {
 #messageBox,
 #messageBox2 {
   max-height: calc(80vh - 127px);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .sent {
   padding: 5px 0;
-  height: 50px;
   width: 100%;
   text-align: right;
 }
 .sent span {
   display: inline-block;
   height: 100%;
-  margin-right: 20px;
+  max-width: 70%;
+  margin-right: 0 20px 0 30%;
   background-color: #f0f2f5;
   padding: 10px 10px;
   border-radius: 20px;
   margin: auto 20px auto auto;
+  overflow-x: hidden;
+  word-wrap: break-word;
 }
 .received {
   margin-left: 20px;
