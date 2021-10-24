@@ -19,14 +19,14 @@
           </div>
           <div class="d-flex flex-column">
             <router-link
-              class="d-block h-65px px-3 d-flex align-items-center"
+              class="chat-user"
               v-for="friend in friends"
               :key="friend.id"
               :to="{
                 name: 'chat-with-user',
                 params: { chattingUserId: friend.id },
               }"
-              ><div class="d-flex">
+              ><div>
                 <div class="position-relative">
                   <img :src="friend.avatar" alt="avatar" class="avatar" />
                   <div :class="friend.isOnline ? 'online' : 'offline'">
@@ -34,8 +34,13 @@
                   </div>
                 </div>
                 <div class="ms-2">
-                  <span class="d-block">{{ friend.name }}</span>
-                  <span class="d-block">last message</span>
+                  <span class="">{{ friend.name }}</span>
+                  <span v-if="friend.lastMessage" class="last-message">{{
+                    friend.lastMessage
+                  }}</span>
+                  <span v-else class="last-message">
+                    尚無聊天訊息
+                  </span>
                 </div>
               </div></router-link
             >
@@ -173,18 +178,18 @@
           <div
             class="d-flex justify-content-center align-items-center border h-65px"
           >
-            <span class="fs-4">name</span>
+            <span class="fs-4">{{ currentUser.name }}</span>
           </div>
           <div class="d-flex flex-column">
             <router-link
-              class="d-block h-65px px-3 d-flex align-items-center"
+              class="chat-user"
               v-for="friend in friends"
               :key="friend.id"
               :to="{
                 name: 'chat-with-user',
                 params: { chattingUserId: friend.id },
               }"
-              ><div class="d-flex">
+              ><div>
                 <div class="position-relative">
                   <img :src="friend.avatar" alt="avatar" class="avatar" />
                   <div :class="friend.isOnline ? 'online' : 'offline'">
@@ -192,11 +197,16 @@
                   </div>
                 </div>
                 <div class="ms-2">
-                  <span class="d-block">{{ friend.name }}</span>
-                  <span class="d-block">last message</span>
+                  <span class="">{{ friend.name }}</span>
+                  <span v-if="friend.lastMessage" class="last-message">{{
+                    friend.lastMessage
+                  }}</span>
+                  <span v-else class="last-message">
+                    尚無聊天訊息
+                  </span>
                 </div>
-              </div>
-            </router-link>
+              </div></router-link
+            >
           </div>
         </aside>
       </div>
@@ -228,6 +238,15 @@ export default {
     let onlineUsersId = ref([]);
 
     let messages = ref([]);
+
+    const updateLastMessage = (data) => {
+      friends.value = friends.value.map((friend) => {
+        if (friend.id === data.senderId || friend.id === data.receiverId) {
+          friend.lastMessage = data.message;
+        }
+        return friend;
+      });
+    };
 
     const setOverflowAtTheEnd = () => {
       let messageBox = document.getElementById("messageBox");
@@ -330,9 +349,18 @@ export default {
         }
 
         if (data.message) {
-          data.message.class = data.status ? "sent" : "received";
-          data.message.messageStatus = data.status === "success" ? true : false;
-          updateMessages(data.message);
+          if (
+            Number(data.message.senderId) === Number(chattingUserId) ||
+            Number(data.message.receiverId) === Number(chattingUserId)
+          ) {
+            data.message.class = data.status ? "sent" : "received";
+            data.message.messageStatus =
+              data.status === "success" ? true : false;
+
+            updateMessages(data.message);
+          }
+
+          updateLastMessage(data.message);
         }
       };
     };
@@ -578,5 +606,38 @@ textarea {
   width: 40px;
   border-radius: 20px;
   margin-right: 8px;
+}
+.chat-user {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+}
+.chat-user:hover {
+  background-color: #eeeeee;
+  text-decoration: none;
+}
+.chat-user > div {
+  display: flex;
+  max-width: 90%;
+  flex: 1;
+  justify-content: space-between;
+  min-width: 0;
+  overflow: hidden;
+}
+.chat-user > div > div + div {
+  max-width: 100%;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+  overflow: hidden;
+}
+.chat-user > div > div > span + span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  color: #9f9f9f;
 }
 </style>
