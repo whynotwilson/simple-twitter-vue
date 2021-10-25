@@ -47,12 +47,10 @@
           </div>
         </aside>
         <div
-          class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-sm-8 padding-none border-top border-end border-bottom position-relative"
+          class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-sm-8 padding-none border-top border-end border-bottom"
         >
-          <div v-if="isChatUser" class="align-content-stretch">
-            <div
-              class="d-flex justify-content-center align-items-center border-bottom h-65px"
-            >
+          <div v-if="isChatUser" class="chat-window">
+            <div>
               <span class="fs-4">{{ chattingUser.name }}</span>
             </div>
             <div>
@@ -72,25 +70,21 @@
                   </div>
                 </div>
               </div>
-              <div
-                v-else
-                class="d-flex justify-content-center align-items-center"
-                style="height: calc(80vh - 127px);"
-              >
+              <div v-else class="" style="height: calc(80vh - 127px);">
                 <div class="spinner-border text-primary" role="status">
                   <span class="visually-hidden">Loading...</span>
                 </div>
               </div>
             </div>
-            <div class="h-65 chat-form px-4 py-3">
-              <form action="POST" class="border" @submit.prevent="handleSubmit">
-                <div class="pre"></div>
+            <div class="chat-form">
+              <form action="POST" @submit.prevent="handleSubmit">
                 <textarea
                   placeholder="訊息......"
                   v-model="message"
                   @keypress="submitOnEnter"
-                  @input="changePreText"
+                  @input="updateTextareaHeight"
                   class="textarea"
+                  rows="1"
                 ></textarea>
                 <button type="submit">傳送</button>
               </form>
@@ -127,11 +121,7 @@
               <span class="fs-4">{{ chattingUser.name }}</span>
             </div>
             <div>
-              <div
-                id="messageBox2"
-                v-if="!isFetchMessagesLoading"
-                class="overflow-auto"
-              >
+              <div id="messageBox2" v-if="!isFetchMessagesLoading" class="">
                 <div
                   v-for="message in messages"
                   :key="message.id"
@@ -432,11 +422,31 @@ export default {
     };
   },
   methods: {
-    changePreText() {
+    updateTextareaHeight() {
       let textarea = document.getElementsByClassName("textarea");
-      let pre = document.getElementsByClassName("pre");
-      pre[0].innerHTML = textarea[0].value.replace(/\n/g, "<br/>' '");
-      pre[1].innerHTML = textarea[1].value.replace(/\n/g, "<br/>' '");
+      let height = [
+        textarea[0].style.height.substring(
+          0,
+          textarea[0].style.height.length - 2
+        ),
+        textarea[1].style.height.substring(
+          0,
+          textarea[1].style.height.length - 2
+        ),
+      ];
+      console.log(height);
+      // if (height[0] > 128) {
+      //   textarea[0].style["overflow-y"] = "auto";
+      // }
+      // if (height[1] > 128) {
+      //   textarea[1].style["overflow-y"] = "auto";
+      // }
+
+      textarea[0].style.height = "auto";
+      textarea[0].style.height = textarea[0].scrollHeight + "px";
+
+      textarea[1].style.height = "auto";
+      textarea[1].style.height = textarea[1].scrollHeight + "px";
     },
     submitOnEnter(e) {
       if (e.which === 13 && !e.shiftKey) {
@@ -487,47 +497,56 @@ export default {
   border-radius: 5px;
   background-color: #777;
 }
+.chat-window {
+  height: 80vh;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.chat-window > div:nth-child(1) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid #dee2e6;
+  min-height: 65px;
+  align-self: stretch;
+}
+.chat-window > div:nth-child(2) {
+  margin-top: auto;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.chat-window > div > div:nth-child(1) {
+  margin-top: auto;
+}
 .chat-form {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
+  align-self: center;
+  width: 90%;
+  margin: 15px 0;
 }
 .chat-form form {
-  position: relative;
-  width: 100%;
-  border-radius: 50px;
-}
-.chat-form form div.pre {
-  position: relative;
-  display: block;
-  visibility: hidden;
-  width: 80%;
-  word-wrap: break-word;
-  padding: 2px 20px;
-  margin: 0;
-  min-height: 28px;
+  display: flex;
+  flex-direction: row;
+  border: 1px solid #dee2e6;
+  border-radius: 20px;
 }
 .chat-form form textarea {
-  position: absolute;
-  height: 100%;
-  top: 0;
-  left: 0;
-  background: transparent;
   outline: 0;
   resize: none;
-  overflow: hidden;
-  width: 80%;
-  border: none;
-  padding: 2px 20px;
+  width: 85%;
+  border: 0px;
+  border-radius: 20px;
+  padding: 4px 20px;
+  max-height: 104px;
+  overflow-y: auto;
 }
 .chat-form button {
   color: #0571ed;
-  border: none;
+  border: 0px;
+  border-radius: 20px;
   background-color: white;
-  position: absolute;
-  top: 50%;
-  right: 2%;
-  transform: translate(0, -50%);
 }
 .min-height-80vh {
   min-height: 80vh;
@@ -549,9 +568,6 @@ div a.d-block.active {
   /* background-color: rgb(199, 199, 199); */
   background-color: #f0f2f5;
 }
-textarea {
-  resize: none;
-}
 .friends-box {
   width: 80%;
   margin-left: auto;
@@ -565,7 +581,6 @@ textarea {
 }
 #messageBox,
 #messageBox2 {
-  max-height: calc(80vh - 127px);
   overflow-y: auto;
   overflow-x: hidden;
 }
