@@ -108,58 +108,46 @@
 
     <!--  Dimensions < 576px(sm) -->
     <div class="flex d-block d-sm-none">
-      <div class="row min-height-80vh">
-        <!-- message box -->
-        <div
-          v-if="isChatUser"
-          class="padding-none position-relative message-box bg-white"
-        >
-          <div class="align-content-stretch">
-            <div
-              class="d-flex justify-content-center align-items-center border-bottom h-65px"
-            >
-              <span class="fs-4">{{ chattingUser.name }}</span>
-            </div>
-            <div>
-              <div id="messageBox2" v-if="!isFetchMessagesLoading" class="">
-                <div
-                  v-for="message in messages"
-                  :key="message.id"
-                  :class="message.class"
-                >
-                  <div>
-                    <img
-                      v-if="message.class === 'received'"
-                      :src="chattingUser.avatar"
-                      alt="avatar"
-                    />
-                    <span>{{ message.message }}</span>
-                  </div>
-                </div>
-              </div>
+      <div class="row min-height-80vh bg-white xs">
+        <div v-if="isChatUser" class="chat-window">
+          <div>
+            <span class="fs-4">{{ chattingUser.name }}</span>
+          </div>
+          <div>
+            <div id="messageBox" v-if="!isFetchMessagesLoading">
               <div
-                v-else
-                class="d-flex justify-content-center align-items-center"
-                style="height: calc(80vh - 127px);"
+                v-for="message in messages"
+                :key="message.id"
+                :class="message.class"
               >
-                <div class="spinner-border text-primary" role="status">
-                  <span class="visually-hidden">Loading...</span>
+                <div>
+                  <img
+                    v-if="message.class === 'received'"
+                    :src="chattingUser.avatar"
+                    alt="avatar"
+                  />
+                  <span>{{ message.message }}</span>
                 </div>
               </div>
             </div>
-            <div class="h-65 chat-form px-4 py-3">
-              <form action="POST" class="border" @submit.prevent="handleSubmit">
-                <div class="pre"></div>
-                <textarea
-                  placeholder="訊息......"
-                  v-model="message"
-                  @keypress="submitOnEnter"
-                  @input="changePreText"
-                  class="textarea"
-                ></textarea>
-                <button type="submit">傳送</button>
-              </form>
+            <div v-else class="" style="height: calc(80vh - 127px);">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
             </div>
+          </div>
+          <div class="chat-form">
+            <form action="POST" @submit.prevent="handleSubmit">
+              <textarea
+                placeholder="訊息......"
+                v-model="message"
+                @keypress="submitOnEnter"
+                @input="updateTextareaHeight"
+                class="textarea"
+                rows="1"
+              ></textarea>
+              <button type="submit">傳送</button>
+            </form>
           </div>
         </div>
 
@@ -496,6 +484,10 @@ export default {
   width: 10px;
   border-radius: 5px;
   background-color: #777;
+}
+.xs {
+  max-width: 88%;
+  margin: auto;
 }
 .chat-window {
   height: 80vh;
