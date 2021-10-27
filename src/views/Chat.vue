@@ -453,6 +453,13 @@ export default {
 .position-relative {
   position: relative;
 }
+aside {
+  max-height: 80vh;
+}
+aside > div:nth-child(2) {
+  max-height: calc(80vh - 65px);
+  overflow-y: auto;
+}
 .online {
   position: absolute;
   bottom: 0;
