@@ -52,6 +52,16 @@ const routes = [
     component: () => import("./../views/Tags.vue"),
   },
   {
+    path: "/chat",
+    name: "chat-index",
+    component: () => import("./../views/Chat.vue"),
+  },
+  {
+    path: "/chat/:chattingUserId",
+    name: "chat-with-user",
+    component: () => import("./../views/Chat.vue"),
+  },
+  {
     path: "/:pathMatch(.*)*",
     name: "not-found",
     component: PageNotFound,

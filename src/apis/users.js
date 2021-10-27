@@ -7,6 +7,9 @@ export default {
   getTweets({ userId }) {
     return apiHelper.get(`/users/${userId}/tweets`);
   },
+  getFriends({ userId }) {
+    return apiHelper.get(`/users/${userId}/friends`);
+  },
   addLike({ tweetId }) {
     return apiHelper.post(`/tweets/${tweetId}/like`, {});
   },
@@ -30,6 +33,6 @@ export default {
     });
   },
   addFollowing({ followingId }) {
-    return apiHelper.post(`/followships`, { followingId })
+    return apiHelper.post(`/followships`, { followingId });
   },
-}
+};

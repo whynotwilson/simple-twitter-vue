@@ -59,7 +59,7 @@
             >
               編輯個人檔案
             </button>
-            <a href="#" class="btn bg-#f0f2f5 border" v-else>發送訊息 </a>
+            <a href="/#/chat" class="btn bg-#f0f2f5 border" v-else>發送訊息 </a>
           </div>
         </div>
 
@@ -73,7 +73,7 @@
             >
               編輯個人檔案
             </button>
-            <a href="#" class="btn bg-#f0f2f5 border" v-else>發送訊息 </a>
+            <a href="/#/chat" class="btn bg-#f0f2f5 border" v-else>發送訊息 </a>
           </div>
           <div>
             <button class="btn" @click="showMask('followers')">
