@@ -27,6 +27,16 @@ const routes = [
     component: Home,
   },
   {
+    path: "/hashtag/:hashtag",
+    name: "hashtag",
+    component: () => import("./../views/Hashtag.vue"),
+  },
+  {
+    path: "/hashtag/:hashtag",
+    name: "hashtag-not-exist",
+    component: () => import("./../views/NotExist.vue"),
+  },
+  {
     path: "/users/:id",
     name: "user",
     component: () => import("./../views/User.vue"),
