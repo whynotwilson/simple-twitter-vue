@@ -84,8 +84,8 @@ router.beforeEach(async (to, from, next) => {
     isAuthenticated = await store.dispatch("fetchCurrentUser");
   }
 
-  // 如果 token 無效則轉址到登入頁
-  if (!isAuthenticated && to.name !== "sign-in") {
+  // 如果 token 無效且不是到註冊頁則轉址到登入頁
+  if (!isAuthenticated && to.name !== "sign-in" && to.name !== "sign-up") {
     next("/signin");
     return;
   }
