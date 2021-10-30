@@ -22,16 +22,9 @@
         :initial-replies="tweet.Replies"
       />
     </div>
-  </div>
 
-  <div
-    class="pt-3 container-fluid d-flex justify-content-start bg-white border-top"
-    v-if="tweetsData.tweets.length < 1"
-  >
-    <div class="mx-auto pb-3 w-80 word-wrap-break">
-      <div>
-        <h1 style="color: red">此 hashtag 尚無貼文</h1>
-      </div>
+    <div v-else class="spinner-border text-primary mx-auto" role="status">
+      <span class="visually-hidden">Loading...</span>
     </div>
   </div>
 </template>
