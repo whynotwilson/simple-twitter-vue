@@ -307,12 +307,13 @@ export default {
     let chattingUser = ref({});
 
     const store = useStore();
-    const defaultWsUrl = "ws://localhost:3000/";
+    // const baseURL = "ws://localhost:3000/";
+    const baseURL = "ws://simple-twitter-project-api.herokuapp.com/";
     let ws = ref({});
 
     const wsConnect = (chattingUserId) => {
       ws.value = new WebSocket(
-        defaultWsUrl + "?chattingUserId=" + chattingUserId,
+        baseURL + "?chattingUserId=" + chattingUserId,
         store.state.token
       );
 

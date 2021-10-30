@@ -1,7 +1,8 @@
 import axios from "axios";
 import Swal from "sweetalert2";
 
-const baseURL = "http://localhost:3000/";
+// const baseURL = "http://localhost:3000/";
+const baseURL = "https://simple-twitter-project-api.herokuapp.com/";
 
 const axiosInstance = axios.create({
   baseURL,
