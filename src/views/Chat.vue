@@ -17,7 +17,7 @@
           >
             <span class="fs-4">{{ currentUser.name }}</span>
           </div>
-          <div class="d-flex flex-column">
+          <div v-if="!isFetchFriendsLoading" class="d-flex flex-column">
             <router-link
               class="chat-user"
               v-for="friend in friends"
@@ -45,6 +45,18 @@
               </div></router-link
             >
           </div>
+          <div
+            v-else
+            class="d-flex justify-content-center align-items-center"
+            style="height: 100%; width: 100%;"
+          >
+            <div
+              class="spinner-border text-primary mx-auto my-auto"
+              role="status"
+            >
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
         </aside>
         <div
           class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-sm-8 padding-none border-top border-end border-bottom"
@@ -70,8 +82,15 @@
                   </div>
                 </div>
               </div>
-              <div v-else class="" style="height: calc(80vh - 127px);">
-                <div class="spinner-border text-primary" role="status">
+              <div
+                v-else
+                class="d-flex justify-content-center align-items-center"
+                style="height: calc(80vh - 127px); width: 100%;"
+              >
+                <div
+                  class="spinner-border text-primary mx-auto my-auto"
+                  role="status"
+                >
                   <span class="visually-hidden">Loading...</span>
                 </div>
               </div>
@@ -203,7 +222,7 @@ import messagesAPI from "./../apis/messages.js";
 export default {
   name: "Chat",
   setup() {
-    let isLoading = ref(false);
+    let isFetchFriendsLoading = ref(false);
     let isFetchMessagesLoading = ref(false);
 
     const route = useRoute();
@@ -282,7 +301,7 @@ export default {
 
     const fetchFriends = async () => {
       try {
-        isLoading.value = true;
+        isFetchFriendsLoading.value = true;
         let { data } = await usersAPI.getFriends({ userId });
         if (onlineUsersId.value.length) {
           data = data.map((d) => {
@@ -293,8 +312,9 @@ export default {
           });
         }
         friends.value = data;
+        isFetchFriendsLoading.value = false;
       } catch (error) {
-        isLoading.value = false;
+        isFetchFriendsLoading.value = false;
         Toast.fire({
           icon: "error",
           title: "無法取得好友列表，請稍後再試",
@@ -398,6 +418,7 @@ export default {
 
     return {
       isFetchMessagesLoading,
+      isFetchFriendsLoading,
       friends,
       messages,
       isChatUser,
