@@ -59,7 +59,15 @@
             >
               編輯個人檔案
             </button>
-            <a href="/#/chat" class="btn bg-#f0f2f5 border" v-else>發送訊息 </a>
+            <!-- <a href="/#/chat" class="btn bg-#f0f2f5 border" v-else>發送訊息 </a> -->
+            <router-link
+              v-else
+              class="border p-1"
+              :to="{
+                name: 'chat-index',
+              }"
+              >發送訊息</router-link
+            >
           </div>
         </div>
 
@@ -73,7 +81,14 @@
             >
               編輯個人檔案
             </button>
-            <a href="/#/chat" class="btn bg-#f0f2f5 border" v-else>發送訊息 </a>
+            <router-link
+              v-else
+              class="border p-1"
+              :to="{
+                name: 'chat-index',
+              }"
+              >發送訊息</router-link
+            >
           </div>
           <div>
             <button class="btn" @click="showMask('followers')">
