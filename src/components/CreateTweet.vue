@@ -140,7 +140,7 @@ export default {
 
     const replaceTweetText = (newValue) => {
       newValue = newValue.replace(reg, function(match) {
-        return `<span><a class="hashtag" href="/#/hashtag/${match
+        return `<span><a class="hashtag" href="#/hashtag/${match
           .toLowerCase()
           .replace("#", "")}">${match}</a></span>`;
       });
