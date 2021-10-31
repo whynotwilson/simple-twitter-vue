@@ -328,7 +328,7 @@ export default {
 
     const store = useStore();
     // const baseURL = "ws://localhost:3000/";
-    const baseURL = "ws://simple-twitter-project-api.herokuapp.com/";
+    const baseURL = "wss://simple-twitter-project-api.herokuapp.com/";
     let ws = ref({});
 
     const wsConnect = (chattingUserId) => {
