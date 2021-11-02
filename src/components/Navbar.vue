@@ -107,7 +107,7 @@
       </div>
     </div>
 
-    <div class="d-block d-sm-none mx-3 width-100">
+    <div class="d-block d-sm-none mx-3 width-100 search">
       <form class="form-inline" @submit.prevent="handleSearch">
         <input
           class="form-control mr-sm-2 search-input rounded-pill"
@@ -219,7 +219,13 @@ export default {
   margin-left: auto;
 }
 .navbar {
-  z-index: 1070;
+  z-index: 1050;
+}
+.navbar .search {
+  z-index: 1051;
+}
+.account-setting {
+  z-index: 1055;
 }
 .width-100 {
   width: 100%;

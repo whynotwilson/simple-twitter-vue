@@ -124,10 +124,6 @@ export default {
   border-radius: 12px;
 }
 
-.swal2-container {
-  z-index: 2000;
-}
-
 @media (min-width: 768px) {
   .bd-placeholder-img-lg {
     font-size: 3.5rem;
