@@ -105,7 +105,6 @@
                   class="textarea"
                   rows="1"
                 ></textarea>
-                <button type="submit">傳送</button>
               </form>
             </div>
           </div>
@@ -165,7 +164,6 @@
                 class="textarea"
                 rows="1"
               ></textarea>
-              <button type="submit">傳送</button>
             </form>
           </div>
         </div>
@@ -390,8 +388,10 @@ export default {
     let message = ref("");
 
     const handleSubmit = () => {
-      wsSend(String(message.value));
-      message.value = "";
+      if (message.value.trim()) {
+        wsSend(String(message.value));
+        message.value = "";
+      }
     };
 
     onBeforeRouteUpdate(() => {
