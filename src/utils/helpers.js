@@ -39,3 +39,18 @@ export const DeleteConfirm = Swal.mixin({
   cancelButtonColor: "#d33",
   confirmButtonText: "確定刪除！",
 });
+
+export const throttle = (fn, interval) => {
+  let last = 0;
+
+  return function() {
+    let context = this;
+    let args = arguments;
+    let now = +new Date();
+
+    if (now - last >= interval) {
+      last = now;
+      fn.apply(context, args);
+    }
+  };
+};
