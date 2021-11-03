@@ -148,7 +148,7 @@ export default {
     };
 
     const isTweetTextEmpty = computed(() => {
-      return tweetText.value ? false : true;
+      return tweetText.value.trim() ? false : true;
     });
 
     const handleSubmit = async () => {
