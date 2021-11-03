@@ -43,9 +43,9 @@
         <button
           type="submit"
           class="btn btn-primary"
-          :disabled="isTweetTextEmpty"
+          :disabled="isTweetTextEmpty || isProcessing"
         >
-          發佈
+          {{ isProcessing ? "發佈中......" : "發佈" }}
         </button>
       </div>
     </div>
