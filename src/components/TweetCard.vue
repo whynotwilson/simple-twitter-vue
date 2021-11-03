@@ -176,7 +176,7 @@ import { useRoute } from "vue-router";
 import usersAPI from "./../apis/users.js";
 import tweetsAPI from "./../apis/tweets.js";
 import commentsAPI from "./../apis/comments.js";
-import { Toast, DeleteConfirm } from "./../utils/helpers";
+import { Toast, DeleteConfirm, throttle } from "./../utils/helpers";
 import { mapState, useStore } from "vuex";
 
 export default {
@@ -220,7 +220,7 @@ export default {
     const commentInput = ref(null);
     const collapse = ref(null);
 
-    const deleteLike = async (tweetId) => {
+    const deleteLike = throttle(async (tweetId) => {
       try {
         const { data } = await usersAPI.deleteLike({ tweetId });
 
@@ -237,9 +237,9 @@ export default {
 
         console.log("Error: ", error);
       }
-    };
+    }, 1000);
 
-    const addLike = async (tweetId) => {
+    const addLike = throttle(async (tweetId) => {
       try {
         const { data } = await usersAPI.addLike({ tweetId });
 
@@ -256,7 +256,7 @@ export default {
 
         console.log("Error: ", error);
       }
-    };
+    }, 1000);
 
     const handleSubmit = async (tweetId) => {
       try {
