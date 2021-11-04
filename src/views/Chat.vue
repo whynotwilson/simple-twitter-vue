@@ -613,7 +613,7 @@ div a.d-block.active {
 .sent span {
   display: inline-block;
   height: 100%;
-  max-width: 70%;
+  max-width: 60%;
   margin-right: 0 20px 0 30%;
   background-color: #f0f2f5;
   padding: 10px 10px;
@@ -625,17 +625,24 @@ div a.d-block.active {
 .received {
   margin-left: 20px;
   padding: 5px 0;
-  height: 50px;
   text-align: left;
+}
+.received div {
+  display: flex;
+  justify-content: flex-start;
+  align-content: space-around;
+  flex-direction: row;
+  align-items: flex-start;
 }
 .received span {
   display: inline-block;
   height: 100%;
-  margin-right: 20px;
+  max-width: 60%;
   background-color: #f0f2f5;
   padding: 10px 10px;
   border-radius: 20px;
-  margin: auto 20px auto auto;
+  overflow-x: hidden;
+  word-wrap: break-word;
 }
 .received img {
   height: 40px;
