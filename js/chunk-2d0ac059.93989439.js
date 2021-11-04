@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d0ac059"],{1884:function(e,a,c){"use strict";c.r(a);var r=c("7a23"),n={class:"container-sm py-5"},t=Object(r["h"])("h1",null,"已標註頁面",-1);function b(e,a){var c=Object(r["z"])("UserProfileCard"),b=Object(r["z"])("NavTabs");return Object(r["r"])(),Object(r["d"])("div",n,[Object(r["h"])(c),Object(r["h"])(b),t])}var s=c("7950"),o=c("8bb1"),d={components:{UserProfileCard:s["a"],NavTabs:o["a"]}};d.render=b;a["default"]=d}}]);
+//# sourceMappingURL=chunk-2d0ac059.93989439.js.map
